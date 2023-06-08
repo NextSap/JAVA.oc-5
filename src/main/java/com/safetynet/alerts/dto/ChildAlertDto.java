@@ -1,12 +1,14 @@
 package com.safetynet.alerts.dto;
 
 import com.safetynet.alerts.models.Person;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class ChildAlertDTO {
-    private List<ChildDTO> children;
+@Builder
+public class ChildAlertDto {
+    private List<ChildDto> children;
     private List<Person> familyMembers;
 }

@@ -1,16 +1,16 @@
 package com.safetynet.alerts.dto;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-@AllArgsConstructor
-public class HomeDTO {
+@Builder
+public class HomeDto {
     private String address;
     private String city;
     private String zip;
     private int station;
-    private List<PersonWithMedicalsDTO> persons;
+    private List<PersonWithMedicalsDto> persons;
 }

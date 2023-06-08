@@ -1,11 +1,11 @@
 package com.safetynet.alerts.dto;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
-public class ChildDTO {
+@Builder
+public class ChildDto {
     private String firstName;
     private String lastName;
     private int age;
