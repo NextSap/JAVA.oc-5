@@ -48,11 +48,11 @@ public class ConfusionController {
 
     @GetMapping("/personInfo")
     public ResponseEntity<PersonWithMedicalsAndEmailDto> getPersonInfo(@RequestParam("firstName") String firstName, @RequestParam("lastName") String lastName) {
-        return null;
+        return new ResponseEntity<>(personService.getPersonInfo(firstName, lastName), HttpStatus.OK);
     }
 
     @GetMapping("/communityEmail")
     public ResponseEntity<List<String>> getCommunityEmail(@RequestParam("city") String city) {
-        return null;
+        return new ResponseEntity<>(personService.getCommunityEmail(city), HttpStatus.OK);
     }
 }

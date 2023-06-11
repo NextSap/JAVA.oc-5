@@ -2,11 +2,11 @@ package com.safetynet.alerts.mapper;
 
 import com.safetynet.alerts.dto.ChildDto;
 import com.safetynet.alerts.dto.PersonDto;
+import com.safetynet.alerts.dto.PersonWithMedicalsAndEmailDto;
 import com.safetynet.alerts.dto.SimplePersonDto;
 import com.safetynet.alerts.entity.PersonEntity;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -61,5 +61,15 @@ public class PersonMapper {
 
     public List<SimplePersonDto> toSimplePersonDtoList(List<PersonEntity> personEntityList) {
         return personEntityList.stream().map(this::toSimplePersonDto).collect(Collectors.toList());
+    }
+
+    public PersonWithMedicalsAndEmailDto toPersonWithMedicalsAndEmailDto(PersonEntity personEntity) {
+        return PersonWithMedicalsAndEmailDto.builder()
+                .firstName(personEntity.getFirstName())
+                .lastName(personEntity.getLastName())
+                .email(personEntity.getEmail())
+                .address(addressMapper.toAddressDto(personEntity.getAddress()))
+                .medicalRecord(medicalRecordMapper.toMedicalRecordDto(personEntity.getMedicalRecord()))
+                .build();
     }
 }

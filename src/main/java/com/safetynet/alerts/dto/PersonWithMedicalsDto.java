@@ -10,8 +10,7 @@ import java.util.List;
 public class PersonWithMedicalsDto {
     private String firstName;
     private String lastName;
-    private String phoneNumber;
+    private String phone;
     private int age;
-    private List<String> medications;
-    private List<String> allergies;
+    private MedicalRecordDto medicalRecord;
 }

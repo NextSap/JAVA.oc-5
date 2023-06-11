@@ -63,4 +63,14 @@ public class PersonService {
                 .familyMembers(personMapper.toSimplePersonDtoList(familyMembers))
                 .build();
     }
+
+    public PersonWithMedicalsAndEmailDto getPersonInfo(String firstName, String lastName) {
+        PersonEntity personEntity = getPersonEntity(firstName, lastName);
+        return personMapper.toPersonWithMedicalsAndEmailDto(personEntity);
+    }
+
+    public List<String> getCommunityEmail(String city) {
+        List<PersonEntity> people = getPeople().stream().filter(person -> person.getAddress().getCity().equals(city)).toList();
+        return people.stream().map(PersonEntity::getEmail).toList();
+    }
 }
