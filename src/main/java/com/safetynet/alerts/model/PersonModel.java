@@ -1,10 +1,13 @@
-package com.safetynet.alerts.models;
+package com.safetynet.alerts.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-public class Person {
+@NoArgsConstructor
+public class PersonModel {
     private String firstName;
     private String lastName;
     private String address;

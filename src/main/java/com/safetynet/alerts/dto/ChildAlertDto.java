@@ -1,6 +1,6 @@
 package com.safetynet.alerts.dto;
 
-import com.safetynet.alerts.models.Person;
+import com.safetynet.alerts.entity.PersonEntity;
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,5 +10,5 @@ import java.util.List;
 @Builder
 public class ChildAlertDto {
     private List<ChildDto> children;
-    private List<Person> familyMembers;
+    private List<PersonEntity> familyMembers;
 }

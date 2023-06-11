@@ -1,6 +1,6 @@
 package com.safetynet.alerts.dto;
 
-import com.safetynet.alerts.models.Person;
+import com.safetynet.alerts.entity.PersonEntity;
 import lombok.Builder;
 import lombok.Data;
 
@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @Builder
 public class PeopleCoveredByFireStationDto {
-    private List<Person> people;
+    private List<PersonEntity> people;
     private int adults;
     private int children;
 }
