@@ -1,6 +1,9 @@
 package com.safetynet.alerts.controller;
 
 import com.safetynet.alerts.dto.*;
+import com.safetynet.alerts.service.PersonService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -11,6 +14,13 @@ import java.util.List;
 @RestController
 public class ConfusionController {
 
+    private final PersonService personService;
+
+    @Autowired
+    public ConfusionController(PersonService personService) {
+        this.personService = personService;
+    }
+
     @GetMapping("/firestation")
     public ResponseEntity<PeopleCoveredByFireStationDto> getPeopleCoveredByFireStation(@RequestParam("stationNumber") int stationNumber) {
         return null;
@@ -18,7 +28,7 @@ public class ConfusionController {
 
     @GetMapping("/childAlert")
     public ResponseEntity<ChildAlertDto> getChildrenFromAddress(@RequestParam("address") String address) {
-        return null;
+        return new ResponseEntity<>(personService.getChildAlert(address), HttpStatus.OK);
     }
 
     @GetMapping("/phoneAlert")
@@ -37,7 +47,7 @@ public class ConfusionController {
     }
 
     @GetMapping("/personInfo")
-    public ResponseEntity<List<PersonWithMedicalsAndEmailDto>> getPersonInfo(@RequestParam("firstName") String firstName, @RequestParam("lastName") String lastName) {
+    public ResponseEntity<PersonWithMedicalsAndEmailDto> getPersonInfo(@RequestParam("firstName") String firstName, @RequestParam("lastName") String lastName) {
         return null;
     }
 

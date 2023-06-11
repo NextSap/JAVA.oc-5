@@ -3,6 +3,8 @@ package com.safetynet.alerts.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,6 +19,7 @@ public class PersonEntity {
     private String lastName;
     private String phone;
     private String email;
+    private Date birthdate;
     @OneToOne(cascade = CascadeType.ALL)
     private AddressEntity address;
     @OneToOne(cascade = CascadeType.ALL)

@@ -4,6 +4,8 @@ import com.safetynet.alerts.dto.PersonDto;
 import com.safetynet.alerts.dto.SimplePersonDto;
 import com.safetynet.alerts.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,13 +20,13 @@ public class PersonController {
     }
 
     @PostMapping()
-    public PersonDto createPerson(@RequestBody PersonDto personDto) {
-        return personService.createPerson(personDto);
+    public ResponseEntity<PersonDto> createPerson(@RequestBody PersonDto personDto) {
+        return new ResponseEntity<>(personService.createPerson(personDto), HttpStatus.CREATED);
     }
 
     @PutMapping()
-    public PersonDto updatePerson(@RequestBody PersonDto personDto) {
-        return personService.updatePerson(personDto);
+    public ResponseEntity<PersonDto> updatePerson(@RequestBody PersonDto personDto) {
+        return new ResponseEntity<>(personService.updatePerson(personDto), HttpStatus.OK);
     }
 
     @DeleteMapping

@@ -6,9 +6,8 @@ import java.util.Date;
 
 public class DateUtils {
 
-    public static boolean isMajor(String birthdate) {
-        long date = getDate(birthdate).getTime();
-        Calendar calendar = new Calendar.Builder().setInstant(date).build();
+    public static boolean isMajor(Date birthdate) {
+        Calendar calendar = new Calendar.Builder().setInstant(birthdate.getTime()).build();
         return calendar.get(Calendar.YEAR) < (Calendar.getInstance().get(Calendar.YEAR) - 18);
     }
 

@@ -39,40 +39,45 @@ public class JacksonConfig implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        System.out.println("---------------> Loading data from data.json");
         Models models = objectMapper.readValue(data.getInputStream(), Models.class);
 
         Entities entities = mapEntities(models);
 
         personRepository.saveAll(entities.getPeople());
         fireStationRepository.saveAll(entities.getFireStations());
-        System.out.println("--------------> Data loaded");
     }
 
     public Entities mapEntities(Models models) {
         Map<String, PersonEntity> personEntityMap = new HashMap<>();
         Map<Integer, FireStationEntity> fireStationEntityMap = new HashMap<>();
         Map<String, MedicalRecordEntity> medicalRecordEntityMap = new HashMap<>();
+        Map<String, Date> birthdateMap = new HashMap<>();
 
         for (MedicalRecordModel medicalRecord : models.medicalrecords) {
             MedicalRecordEntity medicalRecordEntity = new MedicalRecordEntity();
-            medicalRecordEntity.setBirthdate(DateUtils.getDate(medicalRecord.getBirthdate()));
+
             medicalRecordEntity.setMedications(Arrays.stream(medicalRecord.getMedications()).map(medication -> {
                 String[] medicationSplit = medication.split(":");
                 return MedicationEntity.builder().name(medicationSplit[0]).mlDosage(Long.parseLong(medicationSplit[1].replace("mg", ""))).build();
             }).collect(Collectors.toList()));
+
             medicalRecordEntity.setAllergies(Arrays.asList(medicalRecord.getAllergies()));
             medicalRecordEntityMap.put(medicalRecord.getFirstName() + medicalRecord.getLastName(), medicalRecordEntity);
+
+            birthdateMap.put(medicalRecord.getFirstName() + medicalRecord.getLastName(), DateUtils.getDate(medicalRecord.getBirthdate()));
         }
 
         for (PersonModel person : models.persons) {
             PersonEntity personEntity = new PersonEntity();
+
             personEntity.setFirstName(person.getFirstName());
             personEntity.setLastName(person.getLastName());
             personEntity.setPhone(person.getPhone());
             personEntity.setEmail(person.getEmail());
             personEntity.setAddress(AddressEntity.builder().street(person.getAddress()).city(person.getCity()).zip(person.getZip()).build());
+            personEntity.setBirthdate(birthdateMap.get(person.getFirstName() + person.getLastName()));
             personEntity.setMedicalRecord(medicalRecordEntityMap.get(person.getFirstName() + person.getLastName()));
+
             personEntityMap.put(person.getFirstName() + person.getLastName(), personEntity);
         }
 
@@ -82,10 +87,13 @@ public class JacksonConfig implements ApplicationRunner {
                 fireStationEntity.getAddresses().add(fireStation.getAddress());
                 continue;
             }
+
             FireStationEntity fireStationEntity = new FireStationEntity();
+
             fireStationEntity.setAddresses(new ArrayList<>());
             fireStationEntity.addAddress(fireStation.getAddress());
             fireStationEntity.setStation(fireStation.getStation());
+
             fireStationEntityMap.put(fireStation.getStation(), fireStationEntity);
         }
 
