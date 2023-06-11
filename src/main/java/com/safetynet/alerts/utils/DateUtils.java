@@ -18,4 +18,9 @@ public class DateUtils {
             throw new RuntimeException(e.getMessage(), e.getCause());
         }
     }
+
+    public static int getAge(Date birthdate) {
+        Calendar calendar = new Calendar.Builder().setInstant(birthdate.getTime()).build();
+        return Calendar.getInstance().get(Calendar.YEAR) - calendar.get(Calendar.YEAR);
+    }
 }

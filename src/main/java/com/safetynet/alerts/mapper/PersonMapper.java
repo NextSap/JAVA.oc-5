@@ -1,12 +1,9 @@
 package com.safetynet.alerts.mapper;
 
-import com.safetynet.alerts.dto.ChildDto;
-import com.safetynet.alerts.dto.PersonDto;
-import com.safetynet.alerts.dto.PersonWithMedicalsAndEmailDto;
-import com.safetynet.alerts.dto.SimplePersonDto;
+import com.safetynet.alerts.dto.*;
 import com.safetynet.alerts.entity.PersonEntity;
+import com.safetynet.alerts.utils.DateUtils;
 
-import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,11 +37,10 @@ public class PersonMapper {
     }
 
     public ChildDto toChildDto(PersonEntity personEntity) {
-        Calendar calendar = new Calendar.Builder().setInstant(personEntity.getBirthdate()).build();
         return ChildDto.builder()
                 .firstName(personEntity.getFirstName())
                 .lastName(personEntity.getLastName())
-                .age(Calendar.getInstance().get(Calendar.YEAR) - calendar.get(Calendar.YEAR))
+                .age(DateUtils.getAge(personEntity.getBirthdate()))
                 .build();
     }
 
@@ -70,6 +66,32 @@ public class PersonMapper {
                 .email(personEntity.getEmail())
                 .address(addressMapper.toAddressDto(personEntity.getAddress()))
                 .medicalRecord(medicalRecordMapper.toMedicalRecordDto(personEntity.getMedicalRecord()))
+                .build();
+    }
+
+    public PersonWithMedicalsDto toPersonWithMedicalsDto(PersonEntity personEntity) {
+        return PersonWithMedicalsDto.builder()
+                .firstName(personEntity.getFirstName())
+                .lastName(personEntity.getLastName())
+                .phone(personEntity.getPhone())
+                .age(DateUtils.getAge(personEntity.getBirthdate()))
+                .medicalRecord(medicalRecordMapper.toMedicalRecordDto(personEntity.getMedicalRecord()))
+                .build();
+    }
+
+    public List<PersonWithMedicalsDto> toPersonWithMedicalsDtoList(List<PersonEntity> personEntityList) {
+        return personEntityList.stream().map(this::toPersonWithMedicalsDto).collect(Collectors.toList());
+    }
+
+    public List<PersonDto> toPersonDtoList(List<PersonEntity> personEntityList) {
+        return personEntityList.stream().map(this::toPersonDto).collect(Collectors.toList());
+    }
+
+    public PeopleCoveredByFireStationDto toPeopleCoveredByFireStationDto(List<PersonEntity> personEntityList) {
+        return PeopleCoveredByFireStationDto.builder()
+                .people(toPersonDtoList(personEntityList))
+                .adults((int) personEntityList.stream().filter(personEntity -> DateUtils.isMajor(personEntity.getBirthdate())).count())
+                .children((int) personEntityList.stream().filter(personEntity -> !DateUtils.isMajor(personEntity.getBirthdate())).count())
                 .build();
     }
 }

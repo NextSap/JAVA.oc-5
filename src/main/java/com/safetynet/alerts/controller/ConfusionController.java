@@ -1,6 +1,7 @@
 package com.safetynet.alerts.controller;
 
 import com.safetynet.alerts.dto.*;
+import com.safetynet.alerts.service.FireStationService;
 import com.safetynet.alerts.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,15 +16,17 @@ import java.util.List;
 public class ConfusionController {
 
     private final PersonService personService;
+    private final FireStationService fireStationService;
 
     @Autowired
-    public ConfusionController(PersonService personService) {
+    public ConfusionController(PersonService personService, FireStationService fireStationService) {
         this.personService = personService;
+        this.fireStationService = fireStationService;
     }
 
     @GetMapping("/firestation")
     public ResponseEntity<PeopleCoveredByFireStationDto> getPeopleCoveredByFireStation(@RequestParam("stationNumber") int stationNumber) {
-        return null;
+        return new ResponseEntity<>(fireStationService.getPeopleCoveredByFireStation(stationNumber), HttpStatus.OK);
     }
 
     @GetMapping("/childAlert")
@@ -33,12 +36,12 @@ public class ConfusionController {
 
     @GetMapping("/phoneAlert")
     public ResponseEntity<List<String>> getPhoneFromPeopleCoveredByFireStation(@RequestParam("firestation") int firestation) {
-        return null;
+        return new ResponseEntity<>(fireStationService.getPhoneFromPeopleCoveredByFireStation(firestation), HttpStatus.OK);
     }
 
     @GetMapping("/fire")
     public ResponseEntity<FireDto> getPeopleAndFireStationFromAddress(@RequestParam("address") String address) {
-        return null;
+        return new ResponseEntity<>(fireStationService.getPeopleAndFireStationFromAddress(address), HttpStatus.OK);
     }
 
     @GetMapping("/flood/stations")

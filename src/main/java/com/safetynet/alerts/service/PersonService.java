@@ -1,6 +1,7 @@
 package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.dto.*;
+import com.safetynet.alerts.entity.FireStationEntity;
 import com.safetynet.alerts.entity.PersonEntity;
 import com.safetynet.alerts.exception.PersonNotFoundException;
 import com.safetynet.alerts.mapper.PersonMapper;
@@ -72,5 +73,13 @@ public class PersonService {
     public List<String> getCommunityEmail(String city) {
         List<PersonEntity> people = getPeople().stream().filter(person -> person.getAddress().getCity().equals(city)).toList();
         return people.stream().map(PersonEntity::getEmail).toList();
+    }
+
+    public List<PersonEntity> getPeopleFromStreet(String street) {
+        return getPeople().stream().filter(person -> person.getAddress().getStreet().equals(street)).toList();
+    }
+
+    public List<PersonEntity> getPeopleFromFireStation(FireStationEntity fireStationEntity) {
+        return getPeople().stream().filter(person -> fireStationEntity.getAddresses().contains(person.getAddress().getStreet())).toList();
     }
 }

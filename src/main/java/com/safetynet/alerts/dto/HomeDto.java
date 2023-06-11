@@ -8,9 +8,7 @@ import java.util.List;
 @Data
 @Builder
 public class HomeDto {
-    private String address;
-    private String city;
-    private String zip;
+    private AddressDto address;
     private int station;
-    private List<PersonWithMedicalsDto> persons;
+    private List<PersonWithMedicalsDto> people;
 }
