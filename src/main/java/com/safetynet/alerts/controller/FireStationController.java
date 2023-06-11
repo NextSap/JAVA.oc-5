@@ -1,11 +1,13 @@
 package com.safetynet.alerts.controller;
 
-import com.safetynet.alerts.entity.FireStationEntity;
+import com.safetynet.alerts.dto.FireStationDto;
 import com.safetynet.alerts.service.FireStationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RestController()
+@RestController
 @RequestMapping(value = "/firestation")
 public class FireStationController {
 
@@ -17,17 +19,17 @@ public class FireStationController {
     }
 
     @PostMapping
-    public FireStationEntity createFireStation(@RequestBody FireStationEntity fireStation) {
-        return null;
+    public ResponseEntity<FireStationDto> createFireStation(@RequestBody FireStationDto fireStation) {
+        return new ResponseEntity<>(fireStationService.createFireStation(fireStation), HttpStatus.CREATED);
     }
 
     @PutMapping
-    public FireStationEntity updateFireStation(@RequestBody FireStationEntity fireStation) {
-        return null;
+    public ResponseEntity<FireStationDto> updateFireStation(@RequestBody FireStationDto fireStation) {
+        return new ResponseEntity<>(fireStationService.updateFireStation(fireStation), HttpStatus.OK);
     }
 
     @DeleteMapping
-    public void deleteFireStation(@RequestBody String address) {
-
+    public void deleteFireStation(@RequestBody int station) {
+        fireStationService.deleteFireStation(station);
     }
 }

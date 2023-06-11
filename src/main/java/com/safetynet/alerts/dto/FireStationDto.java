@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 @Builder
-public class FireDto {
+public class FireStationDto {
     private int station;
-    private List<PersonWithMedicalsDto> people;
+    private List<String> addresses;
 }
