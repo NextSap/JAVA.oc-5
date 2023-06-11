@@ -71,7 +71,7 @@ public class JacksonConfig implements ApplicationRunner {
             personEntity.setLastName(person.getLastName());
             personEntity.setPhone(person.getPhone());
             personEntity.setEmail(person.getEmail());
-            personEntity.setAddress(AddressEntity.builder().address(person.getAddress()).city(person.getCity()).zip(person.getZip()).build());
+            personEntity.setAddress(AddressEntity.builder().street(person.getAddress()).city(person.getCity()).zip(person.getZip()).build());
             personEntity.setMedicalRecord(medicalRecordEntityMap.get(person.getFirstName() + person.getLastName()));
             personEntityMap.put(person.getFirstName() + person.getLastName(), personEntity);
         }

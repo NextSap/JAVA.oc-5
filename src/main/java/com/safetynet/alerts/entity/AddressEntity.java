@@ -16,7 +16,7 @@ public class AddressEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String address;
+    private String street;
     private String city;
     private String zip;
 }
