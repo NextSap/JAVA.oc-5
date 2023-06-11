@@ -11,7 +11,6 @@ public class MedicalRecordMapper {
 
     public MedicalRecordDto toMedicalRecordDto(MedicalRecordEntity medicalRecordEntity) {
         return MedicalRecordDto.builder()
-                .birthdate(medicalRecordEntity.getBirthdate())
                 .medications(medicalRecordEntity.getMedications().stream()
                         .map(medicationMapper::toMedicationDto)
                         .collect(Collectors.toList()))
@@ -21,7 +20,6 @@ public class MedicalRecordMapper {
 
     public MedicalRecordEntity toMedicalRecordEntity(MedicalRecordDto medicalRecordDto) {
         return MedicalRecordEntity.builder()
-                .birthdate(medicalRecordDto.getBirthdate())
                 .medications(medicalRecordDto.getMedications().stream()
                         .map(medicationMapper::toMedicationEntity)
                         .collect(Collectors.toList()))

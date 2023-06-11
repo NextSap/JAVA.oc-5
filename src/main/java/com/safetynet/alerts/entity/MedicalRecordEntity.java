@@ -16,7 +16,6 @@ public class MedicalRecordEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private Date birthdate;
     @OneToMany(cascade = CascadeType.ALL)
     private List<MedicationEntity> medications;
     @ElementCollection
