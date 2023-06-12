@@ -64,7 +64,7 @@ public class JacksonConfig implements ApplicationRunner {
             medicalRecordEntity.setAllergies(Arrays.asList(medicalRecord.getAllergies()));
             medicalRecordEntityMap.put(medicalRecord.getFirstName() + medicalRecord.getLastName(), medicalRecordEntity);
 
-            birthdateMap.put(medicalRecord.getFirstName() + medicalRecord.getLastName(), DateUtils.getDate(medicalRecord.getBirthdate()));
+            birthdateMap.put(medicalRecord.getFirstName() + medicalRecord.getLastName(), DateUtils.getInstance().getDate(medicalRecord.getBirthdate()));
         }
 
         for (PersonModel person : models.persons) {

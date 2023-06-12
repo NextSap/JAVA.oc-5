@@ -6,12 +6,14 @@ import java.util.Date;
 
 public class DateUtils {
 
-    public static boolean isMajor(Date birthdate) {
+    private static final DateUtils dateUtils = new DateUtils();
+
+    public boolean isMajor(Date birthdate) {
         Calendar calendar = new Calendar.Builder().setInstant(birthdate.getTime()).build();
         return calendar.get(Calendar.YEAR) < (Calendar.getInstance().get(Calendar.YEAR) - 18);
     }
 
-    public static Date getDate(String date) {
+    public Date getDate(String date) {
         try {
             return new SimpleDateFormat("dd/MM/yyyy").parse(date);
         } catch (Exception e) {
@@ -22,5 +24,9 @@ public class DateUtils {
     public static int getAge(Date birthdate) {
         Calendar calendar = new Calendar.Builder().setInstant(birthdate.getTime()).build();
         return Calendar.getInstance().get(Calendar.YEAR) - calendar.get(Calendar.YEAR);
+    }
+
+    public static DateUtils getInstance() {
+        return dateUtils;
     }
 }

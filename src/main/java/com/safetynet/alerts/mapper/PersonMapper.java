@@ -90,8 +90,8 @@ public class PersonMapper {
     public PeopleCoveredByFireStationDto toPeopleCoveredByFireStationDto(List<PersonEntity> personEntityList) {
         return PeopleCoveredByFireStationDto.builder()
                 .people(toPersonDtoList(personEntityList))
-                .adults((int) personEntityList.stream().filter(personEntity -> DateUtils.isMajor(personEntity.getBirthdate())).count())
-                .children((int) personEntityList.stream().filter(personEntity -> !DateUtils.isMajor(personEntity.getBirthdate())).count())
+                .adults((int) personEntityList.stream().filter(personEntity -> DateUtils.getInstance().isMajor(personEntity.getBirthdate())).count())
+                .children((int) personEntityList.stream().filter(personEntity -> !DateUtils.getInstance().isMajor(personEntity.getBirthdate())).count())
                 .build();
     }
 }

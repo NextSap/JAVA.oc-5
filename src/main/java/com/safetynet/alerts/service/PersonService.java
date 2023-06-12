@@ -56,7 +56,7 @@ public class PersonService {
     }
 
     public ChildAlertDto getChildAlert(String address) {
-        List<PersonEntity> children = getPeople().stream().filter(person -> !DateUtils.isMajor(person.getBirthdate()) && person.getAddress().getStreet().equals(address)).toList();
+        List<PersonEntity> children = getPeople().stream().filter(person -> !DateUtils.getInstance().isMajor(person.getBirthdate()) && person.getAddress().getStreet().equals(address)).toList();
         List<PersonEntity> familyMembers = getPeople().stream().filter(person -> children.stream().anyMatch(child -> child.getLastName().equals(person.getLastName()) && !child.getFirstName().equals(person.getFirstName()))).toList();
 
         return ChildAlertDto.builder()
