@@ -9,6 +9,5 @@ import java.util.List;
 @Builder
 public class HomeDto {
     private AddressDto address;
-    private int station;
     private List<PersonWithMedicalsDto> people;
 }

@@ -1,16 +1,20 @@
 package com.safetynet.alerts.mapper;
 
 import com.safetynet.alerts.dto.*;
+import com.safetynet.alerts.entity.MedicalRecordEntity;
 import com.safetynet.alerts.entity.PersonEntity;
 import com.safetynet.alerts.utils.DateUtils;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class PersonMapper {
 
     private final static PersonMapper INSTANCE = new PersonMapper();
     private final AddressMapper addressMapper = AddressMapper.getInstance();
+    private final MedicalRecordMapper medicalRecordMapper = MedicalRecordMapper.getInstance();
 
     private PersonMapper() {
     }
@@ -72,26 +76,30 @@ public class PersonMapper {
         return personEntityList.stream().map(this::toSimplePersonDto).collect(Collectors.toList());
     }
 
-    public PersonWithMedicalsAndEmailDto toPersonWithMedicalsAndEmailDto(PersonEntity personEntity) {
+    public PersonWithMedicalsAndEmailDto toPersonWithMedicalsAndEmailDto(PersonEntity personEntity, MedicalRecordEntity medicalRecordEntity) {
         return PersonWithMedicalsAndEmailDto.builder()
                 .firstName(personEntity.getFirstName())
                 .lastName(personEntity.getLastName())
                 .email(personEntity.getEmail())
                 .address(addressMapper.toAddressDto(personEntity.getAddress()))
+                .medicalRecord(medicalRecordMapper.toSimpleMedicalRecordDto(medicalRecordEntity))
                 .build();
     }
 
-    public PersonWithMedicalsDto toPersonWithMedicalsDto(PersonEntity personEntity) {
+    public PersonWithMedicalsDto toPersonWithMedicalsDto(PersonEntity personEntity, MedicalRecordEntity medicalRecordEntity) {
         return PersonWithMedicalsDto.builder()
                 .firstName(personEntity.getFirstName())
                 .lastName(personEntity.getLastName())
                 .phone(personEntity.getPhone())
                 .age(DateUtils.getAge(personEntity.getBirthdate()))
+                .medicalRecord(medicalRecordMapper.toSimpleMedicalRecordDto(medicalRecordEntity))
                 .build();
     }
 
-    public List<PersonWithMedicalsDto> toPersonWithMedicalsDtoList(List<PersonEntity> personEntityList) {
-        return personEntityList.stream().map(this::toPersonWithMedicalsDto).collect(Collectors.toList());
+    public List<PersonWithMedicalsDto> toPersonWithMedicalsDtoList(Map<PersonEntity, MedicalRecordEntity> personWithMedicalEntityList) {
+        List<PersonWithMedicalsDto> personWithMedicalsDtoList = new ArrayList<>();
+        personWithMedicalEntityList.forEach((personEntity, medicalRecordEntity) -> personWithMedicalsDtoList.add(toPersonWithMedicalsDto(personEntity, medicalRecordEntity)));
+        return personWithMedicalsDtoList;
     }
 
     public List<PersonDto> toPersonDtoList(List<PersonEntity> personEntityList) {

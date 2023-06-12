@@ -45,8 +45,8 @@ public class ConfusionController {
     }
 
     @GetMapping("/flood/stations")
-    public ResponseEntity<List<HomeDto>> getPeopleCoveredByFireStations(@RequestParam("stations") List<Integer> stations) {
-        return null;
+    public ResponseEntity<List<HomeDto>> getPeopleCoveredByFireStations(@RequestParam("stations") Integer[] stations) {
+        return new ResponseEntity<>(fireStationService.getPeopleCoveredByFireStations(stations), HttpStatus.OK);
     }
 
     @GetMapping("/personInfo")

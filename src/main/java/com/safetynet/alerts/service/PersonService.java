@@ -2,12 +2,14 @@ package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.dto.*;
 import com.safetynet.alerts.entity.FireStationEntity;
+import com.safetynet.alerts.entity.MedicalRecordEntity;
 import com.safetynet.alerts.entity.PersonEntity;
 import com.safetynet.alerts.exception.PersonNotFoundException;
 import com.safetynet.alerts.mapper.PersonMapper;
 import com.safetynet.alerts.repository.PersonRepository;
 import com.safetynet.alerts.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,11 +18,13 @@ import java.util.List;
 public class PersonService {
 
     private final PersonRepository personRepository;
+    private final MedicalRecordService medicalRecordService;
     private final PersonMapper personMapper = PersonMapper.getInstance();
 
     @Autowired
-    public PersonService(PersonRepository personRepository) {
+    public PersonService(PersonRepository personRepository, @Lazy MedicalRecordService medicalRecordService) {
         this.personRepository = personRepository;
+        this.medicalRecordService = medicalRecordService;
     }
 
     public PersonEntity getPersonEntity(String firstName, String lastName) {
@@ -72,7 +76,8 @@ public class PersonService {
 
     public PersonWithMedicalsAndEmailDto getPersonInfo(String firstName, String lastName) {
         PersonEntity personEntity = getPersonEntity(firstName, lastName);
-        return personMapper.toPersonWithMedicalsAndEmailDto(personEntity);
+        MedicalRecordEntity medicalRecordEntity = medicalRecordService.getMedicalRecordEntityByName(firstName, lastName);
+        return personMapper.toPersonWithMedicalsAndEmailDto(personEntity, medicalRecordEntity);
     }
 
     public List<String> getCommunityEmail(String city) {

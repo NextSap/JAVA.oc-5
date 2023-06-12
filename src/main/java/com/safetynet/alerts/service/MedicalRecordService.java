@@ -4,6 +4,7 @@ import com.safetynet.alerts.dto.MedicalRecordDto;
 import com.safetynet.alerts.dto.SimpleMedicalRecordDto;
 import com.safetynet.alerts.entity.MedicalRecordEntity;
 import com.safetynet.alerts.entity.PersonEntity;
+import com.safetynet.alerts.exception.MedicalRecordNotFoundException;
 import com.safetynet.alerts.mapper.MedicalRecordMapper;
 import com.safetynet.alerts.repository.MedicalRecordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class MedicalRecordService {
         return medicalRecordRepository.findAll().stream().filter(medicalRecordEntity -> {
             PersonEntity personEntity = personService.getPersonEntityById(medicalRecordEntity.getPersonId());
             return personEntity.getFirstName().equals(firstName) && personEntity.getLastName().equals(lastName);
-        }).findFirst().orElseThrow();
+        }).findFirst().orElseThrow(() -> new MedicalRecordNotFoundException("Medical record with name " + firstName + " " + lastName + " not found"));
     }
 
     public SimpleMedicalRecordDto getMedicalRecord(String firstName, String lastName) {
