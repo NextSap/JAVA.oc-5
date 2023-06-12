@@ -5,8 +5,21 @@ import com.safetynet.alerts.entity.FireStationEntity;
 
 public class FireStationMapper {
 
+    private static final FireStationMapper INSTANCE = new FireStationMapper();
+
+    private FireStationMapper() {
+    }
+
     public FireStationEntity toFireStationEntity(FireStationDto fireStationDto) {
         return FireStationEntity.builder()
+                .addresses(fireStationDto.getAddresses())
+                .station(fireStationDto.getStation())
+                .build();
+    }
+
+    public FireStationEntity toFireStationEntity(FireStationDto fireStationDto, long id) {
+        return FireStationEntity.builder()
+                .id(id)
                 .addresses(fireStationDto.getAddresses())
                 .station(fireStationDto.getStation())
                 .build();
@@ -17,5 +30,9 @@ public class FireStationMapper {
                 .addresses(fireStationEntity.getAddresses())
                 .station(fireStationEntity.getStation())
                 .build();
+    }
+
+    public static FireStationMapper getInstance() {
+        return INSTANCE;
     }
 }

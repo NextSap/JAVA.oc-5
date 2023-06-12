@@ -16,24 +16,28 @@ import java.util.List;
 public class PersonService {
 
     private final PersonRepository personRepository;
-    private final PersonMapper personMapper = new PersonMapper();
+    private final PersonMapper personMapper = PersonMapper.getInstance();
 
     @Autowired
     public PersonService(PersonRepository personRepository) {
         this.personRepository = personRepository;
     }
 
-    private PersonEntity getPersonEntity(String firstName, String lastName) {
+    public PersonEntity getPersonEntity(String firstName, String lastName) {
         return personRepository.findAll().stream()
                 .filter(person -> person.getFirstName().equals(firstName) && person.getLastName().equals(lastName))
                 .findFirst().orElseThrow(() -> new PersonNotFoundException("Person with name " + firstName + " " + lastName + " not found"));
+    }
+
+    public PersonEntity getPersonEntityById(long id) {
+        return personRepository.findById(id).orElseThrow(() -> new PersonNotFoundException("Person with id " + id + " not found"));
     }
 
     private List<PersonEntity> getPeople() {
         return personRepository.findAll();
     }
 
-    public PersonDto getPerson(SimplePersonDto simplePersonDto) {
+    public PersonDto getPersonEntity(SimplePersonDto simplePersonDto) {
         PersonEntity personEntity = personRepository.findAll().stream()
                 .filter(person -> person.getFirstName().equals(simplePersonDto.getFirstName()) && person.getLastName().equals(simplePersonDto.getLastName()))
                 .findFirst().orElseThrow(() -> new PersonNotFoundException("Person with name " + simplePersonDto.getFirstName() + " " + simplePersonDto.getLastName() + " not found"));
@@ -47,8 +51,9 @@ public class PersonService {
 
     public PersonDto updatePerson(PersonDto personDto) {
         PersonEntity personEntity = getPersonEntity(personDto.getFirstName(), personDto.getLastName());
-        personRepository.save(personEntity);
-        return personDto;
+        PersonEntity updatedPersonDto = personRepository.save(personMapper.toPersonEntity(personDto, personEntity.getId()));
+
+        return personMapper.toPersonDto(updatedPersonDto);
     }
 
     public void deletePerson(SimplePersonDto personDto) {

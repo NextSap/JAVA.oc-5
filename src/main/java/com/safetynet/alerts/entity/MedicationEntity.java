@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class MedicationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private long id;
     private String name;
     private Long mlDosage;
 }

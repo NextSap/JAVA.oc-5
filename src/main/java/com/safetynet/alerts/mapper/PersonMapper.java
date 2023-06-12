@@ -9,8 +9,11 @@ import java.util.stream.Collectors;
 
 public class PersonMapper {
 
-    private final AddressMapper addressMapper = new AddressMapper();
-    private final MedicalRecordMapper medicalRecordMapper = new MedicalRecordMapper();
+    private final static PersonMapper INSTANCE = new PersonMapper();
+    private final AddressMapper addressMapper = AddressMapper.getInstance();
+
+    private PersonMapper() {
+    }
 
     public PersonDto toPersonDto(PersonEntity personEntity) {
         return PersonDto.builder()
@@ -20,7 +23,6 @@ public class PersonMapper {
                 .email(personEntity.getEmail())
                 .address(addressMapper.toAddressDto(personEntity.getAddress()))
                 .birthdate(personEntity.getBirthdate())
-                .medicalRecord(medicalRecordMapper.toMedicalRecordDto(personEntity.getMedicalRecord()))
                 .build();
     }
 
@@ -32,7 +34,18 @@ public class PersonMapper {
                 .email(personDto.getEmail())
                 .address(addressMapper.toAddressEntity(personDto.getAddress()))
                 .birthdate(personDto.getBirthdate())
-                .medicalRecord(medicalRecordMapper.toMedicalRecordEntity(personDto.getMedicalRecord()))
+                .build();
+    }
+
+    public PersonEntity toPersonEntity(PersonDto personDto, long id) {
+        return PersonEntity.builder()
+                .id(id)
+                .firstName(personDto.getFirstName())
+                .lastName(personDto.getLastName())
+                .phone(personDto.getPhone())
+                .email(personDto.getEmail())
+                .address(addressMapper.toAddressEntity(personDto.getAddress()))
+                .birthdate(personDto.getBirthdate())
                 .build();
     }
 
@@ -65,7 +78,6 @@ public class PersonMapper {
                 .lastName(personEntity.getLastName())
                 .email(personEntity.getEmail())
                 .address(addressMapper.toAddressDto(personEntity.getAddress()))
-                .medicalRecord(medicalRecordMapper.toMedicalRecordDto(personEntity.getMedicalRecord()))
                 .build();
     }
 
@@ -75,7 +87,6 @@ public class PersonMapper {
                 .lastName(personEntity.getLastName())
                 .phone(personEntity.getPhone())
                 .age(DateUtils.getAge(personEntity.getBirthdate()))
-                .medicalRecord(medicalRecordMapper.toMedicalRecordDto(personEntity.getMedicalRecord()))
                 .build();
     }
 
@@ -93,5 +104,9 @@ public class PersonMapper {
                 .adults((int) personEntityList.stream().filter(personEntity -> DateUtils.getInstance().isMajor(personEntity.getBirthdate())).count())
                 .children((int) personEntityList.stream().filter(personEntity -> !DateUtils.getInstance().isMajor(personEntity.getBirthdate())).count())
                 .build();
+    }
+
+    public static PersonMapper getInstance() {
+        return INSTANCE;
     }
 }

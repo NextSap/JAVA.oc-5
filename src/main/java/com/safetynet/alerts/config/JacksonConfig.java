@@ -6,6 +6,7 @@ import com.safetynet.alerts.model.FireStationModel;
 import com.safetynet.alerts.model.MedicalRecordModel;
 import com.safetynet.alerts.model.PersonModel;
 import com.safetynet.alerts.repository.FireStationRepository;
+import com.safetynet.alerts.repository.MedicalRecordRepository;
 import com.safetynet.alerts.repository.PersonRepository;
 import com.safetynet.alerts.utils.DateUtils;
 import lombok.AllArgsConstructor;
@@ -27,11 +28,13 @@ public class JacksonConfig implements ApplicationRunner {
 
     private final PersonRepository personRepository;
     private final FireStationRepository fireStationRepository;
+    private final MedicalRecordRepository medicalRecordRepository;
 
-    public JacksonConfig(PersonRepository personRepository, FireStationRepository fireStationRepository, ObjectMapper objectMapper) {
+    public JacksonConfig(PersonRepository personRepository, FireStationRepository fireStationRepository, ObjectMapper objectMapper, MedicalRecordRepository medicalRecordRepository) {
         this.personRepository = personRepository;
         this.fireStationRepository = fireStationRepository;
         this.objectMapper = objectMapper;
+        this.medicalRecordRepository = medicalRecordRepository;
     }
 
     @Value("classpath:data.json")
@@ -41,31 +44,21 @@ public class JacksonConfig implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         Models models = objectMapper.readValue(data.getInputStream(), Models.class);
 
-        Entities entities = mapEntities(models);
+        Entities entities = mapPersonAndFireStationEntities(models);
 
         personRepository.saveAll(entities.getPeople());
         fireStationRepository.saveAll(entities.getFireStations());
+        medicalRecordRepository.saveAll(mapMedicalRecords(models.medicalrecords));
     }
 
-    public Entities mapEntities(Models models) {
+    public Entities mapPersonAndFireStationEntities(Models models) {
         Map<String, PersonEntity> personEntityMap = new HashMap<>();
         Map<Integer, FireStationEntity> fireStationEntityMap = new HashMap<>();
-        Map<String, MedicalRecordEntity> medicalRecordEntityMap = new HashMap<>();
         Map<String, Date> birthdateMap = new HashMap<>();
 
-        for (MedicalRecordModel medicalRecord : models.medicalrecords) {
-            MedicalRecordEntity medicalRecordEntity = new MedicalRecordEntity();
-
-            medicalRecordEntity.setMedications(Arrays.stream(medicalRecord.getMedications()).map(medication -> {
-                String[] medicationSplit = medication.split(":");
-                return MedicationEntity.builder().name(medicationSplit[0]).mlDosage(Long.parseLong(medicationSplit[1].replace("mg", ""))).build();
-            }).collect(Collectors.toList()));
-
-            medicalRecordEntity.setAllergies(Arrays.asList(medicalRecord.getAllergies()));
-            medicalRecordEntityMap.put(medicalRecord.getFirstName() + medicalRecord.getLastName(), medicalRecordEntity);
-
+        for (MedicalRecordModel medicalRecord : models.medicalrecords)
             birthdateMap.put(medicalRecord.getFirstName() + medicalRecord.getLastName(), DateUtils.getInstance().getDate(medicalRecord.getBirthdate()));
-        }
+
 
         for (PersonModel person : models.persons) {
             PersonEntity personEntity = new PersonEntity();
@@ -76,7 +69,6 @@ public class JacksonConfig implements ApplicationRunner {
             personEntity.setEmail(person.getEmail());
             personEntity.setAddress(AddressEntity.builder().street(person.getAddress()).city(person.getCity()).zip(person.getZip()).build());
             personEntity.setBirthdate(birthdateMap.get(person.getFirstName() + person.getLastName()));
-            personEntity.setMedicalRecord(medicalRecordEntityMap.get(person.getFirstName() + person.getLastName()));
 
             personEntityMap.put(person.getFirstName() + person.getLastName(), personEntity);
         }
@@ -98,6 +90,27 @@ public class JacksonConfig implements ApplicationRunner {
         }
 
         return new Entities(new ArrayList<>(personEntityMap.values()), new ArrayList<>(fireStationEntityMap.values()));
+    }
+
+    public List<MedicalRecordEntity> mapMedicalRecords(MedicalRecordModel[] medicalrecords) {
+        List<MedicalRecordEntity> medicalRecordEntityList = new ArrayList<>();
+
+        for (MedicalRecordModel medicalrecord : medicalrecords) {
+            MedicalRecordEntity medicalRecordEntity = new MedicalRecordEntity();
+
+            medicalRecordEntity.setPersonId(personRepository.findAll().stream().filter(person -> person.getFirstName().equals(medicalrecord.getFirstName()) && person.getLastName().equals(medicalrecord.getLastName())).findFirst().get().getId());
+
+            medicalRecordEntity.setMedications(Arrays.stream(medicalrecord.getMedications()).map(medication -> {
+                String[] medicationSplit = medication.split(":");
+                return MedicationEntity.builder().name(medicationSplit[0]).mlDosage(Long.parseLong(medicationSplit[1].replace("mg", ""))).build();
+            }).collect(Collectors.toList()));
+
+            medicalRecordEntity.setAllergies(Arrays.asList(medicalrecord.getAllergies()));
+
+            medicalRecordEntityList.add(medicalRecordEntity);
+        }
+
+        return medicalRecordEntityList;
     }
 
     @Data

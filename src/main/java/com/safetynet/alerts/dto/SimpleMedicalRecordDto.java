@@ -7,9 +7,7 @@ import java.util.List;
 
 @Data
 @Builder
-public class MedicalRecordDto {
-    private String firstName;
-    private String lastName;
+public class SimpleMedicalRecordDto {
     private List<MedicationDto> medications;
     private List<String> allergies;
 }

@@ -6,7 +6,10 @@ import java.util.Date;
 
 public class DateUtils {
 
-    private static final DateUtils dateUtils = new DateUtils();
+    private static final DateUtils INSTANCE = new DateUtils();
+
+    private DateUtils() {
+    }
 
     public boolean isMajor(Date birthdate) {
         Calendar calendar = new Calendar.Builder().setInstant(birthdate.getTime()).build();
@@ -27,6 +30,6 @@ public class DateUtils {
     }
 
     public static DateUtils getInstance() {
-        return dateUtils;
+        return INSTANCE;
     }
 }

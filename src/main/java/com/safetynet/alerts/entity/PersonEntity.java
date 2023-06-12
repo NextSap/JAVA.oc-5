@@ -14,7 +14,7 @@ import java.util.Date;
 public class PersonEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private long id;
     private String firstName;
     private String lastName;
     private String phone;
@@ -22,6 +22,4 @@ public class PersonEntity {
     private Date birthdate;
     @OneToOne(cascade = CascadeType.ALL)
     private AddressEntity address;
-    @OneToOne(cascade = CascadeType.ALL)
-    private MedicalRecordEntity medicalRecord;
 }

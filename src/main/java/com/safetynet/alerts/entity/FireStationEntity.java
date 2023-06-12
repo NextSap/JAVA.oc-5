@@ -15,7 +15,7 @@ import java.util.List;
 public class FireStationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private long id;
     private int station;
     @ElementCollection
     private List<String> addresses;

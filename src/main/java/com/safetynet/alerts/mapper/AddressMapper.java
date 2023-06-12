@@ -5,6 +5,11 @@ import com.safetynet.alerts.entity.AddressEntity;
 
 public class AddressMapper {
 
+    private static final AddressMapper INSTANCE = new AddressMapper();
+
+    private AddressMapper() {
+    }
+
     public AddressDto toAddressDto(AddressEntity addressEntity) {
         return AddressDto.builder()
                 .street(addressEntity.getStreet())
@@ -19,5 +24,9 @@ public class AddressMapper {
                 .city(addressDto.getCity())
                 .zip(addressDto.getZip())
                 .build();
+    }
+
+    public static AddressMapper getInstance() {
+        return INSTANCE;
     }
 }

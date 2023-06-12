@@ -20,8 +20,8 @@ public class FireStationService {
     private final FireStationRepository fireStationRepository;
     private final PersonService personService;
 
-    private final PersonMapper personMapper = new PersonMapper();
-    private final FireStationMapper fireStationMapper = new FireStationMapper();
+    private final PersonMapper personMapper = PersonMapper.getInstance();
+    private final FireStationMapper fireStationMapper = FireStationMapper.getInstance();
 
     @Autowired
     public FireStationService(FireStationRepository fireStationRepository, PersonService personService) {
@@ -48,8 +48,9 @@ public class FireStationService {
 
     public FireStationDto updateFireStation(FireStationDto fireStationDto) {
         FireStationEntity fireStationEntity = getFireStationEntityByStation(fireStationDto.getStation());
-        fireStationRepository.save(fireStationEntity);
-        return fireStationDto;
+        FireStationEntity updatedFireStationEntity = fireStationRepository.save(fireStationMapper.toFireStationEntity(fireStationDto, fireStationEntity.getId()));
+
+        return fireStationMapper.toFireStationDto(updatedFireStationEntity);
     }
 
     public void deleteFireStation(int station) {

@@ -5,6 +5,11 @@ import com.safetynet.alerts.entity.MedicationEntity;
 
 public class MedicationMapper {
 
+    private static final MedicationMapper INSTANCE = new MedicationMapper();
+
+    private MedicationMapper() {
+    }
+
     public MedicationDto toMedicationDto(MedicationEntity medicationEntity) {
         return MedicationDto.builder()
                 .name(medicationEntity.getName())
@@ -17,5 +22,9 @@ public class MedicationMapper {
                 .name(medicationDto.getName())
                 .mlDosage(medicationDto.getMlDosage())
                 .build();
+    }
+
+    public static MedicationMapper getInstance() {
+        return INSTANCE;
     }
 }

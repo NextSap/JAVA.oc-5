@@ -14,5 +14,4 @@ public class PersonDto {
     private String email;
     private Date birthdate;
     private AddressDto address;
-    private MedicalRecordDto medicalRecord;
 }

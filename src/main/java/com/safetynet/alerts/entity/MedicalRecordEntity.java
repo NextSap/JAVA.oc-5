@@ -3,7 +3,6 @@ package com.safetynet.alerts.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -14,8 +13,7 @@ import java.util.List;
 @Table(name = "medicalrecord")
 public class MedicalRecordEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private long personId;
     @OneToMany(cascade = CascadeType.ALL)
     private List<MedicationEntity> medications;
     @ElementCollection
