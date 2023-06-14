@@ -6,15 +6,17 @@ import com.safetynet.alerts.entity.PersonEntity;
 import com.safetynet.alerts.utils.DateUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class PersonMapper {
 
-    private final static PersonMapper INSTANCE = new PersonMapper();
+    private static final PersonMapper INSTANCE = new PersonMapper();
     private final AddressMapper addressMapper = AddressMapper.getInstance();
     private final MedicalRecordMapper medicalRecordMapper = MedicalRecordMapper.getInstance();
+    private final DateUtils dateUtils = DateUtils.getInstance();
 
     private PersonMapper() {
     }
@@ -26,7 +28,7 @@ public class PersonMapper {
                 .phone(personEntity.getPhone())
                 .email(personEntity.getEmail())
                 .address(addressMapper.toAddressDto(personEntity.getAddress()))
-                .birthdate(personEntity.getBirthdate())
+                .birthdate(dateUtils.getFormattedDate(dateUtils.getDate(personEntity.getBirthdate())))
                 .build();
     }
 
@@ -37,7 +39,7 @@ public class PersonMapper {
                 .phone(personDto.getPhone())
                 .email(personDto.getEmail())
                 .address(addressMapper.toAddressEntity(personDto.getAddress()))
-                .birthdate(personDto.getBirthdate())
+                .birthdate(DateUtils.getInstance().getDate(personDto.getBirthdate()).getTime())
                 .build();
     }
 
@@ -49,7 +51,7 @@ public class PersonMapper {
                 .phone(personDto.getPhone())
                 .email(personDto.getEmail())
                 .address(addressMapper.toAddressEntity(personDto.getAddress()))
-                .birthdate(personDto.getBirthdate())
+                .birthdate(DateUtils.getInstance().getDate(personDto.getBirthdate()).getTime())
                 .build();
     }
 
@@ -57,7 +59,7 @@ public class PersonMapper {
         return ChildDto.builder()
                 .firstName(personEntity.getFirstName())
                 .lastName(personEntity.getLastName())
-                .age(DateUtils.getAge(personEntity.getBirthdate()))
+                .age(DateUtils.getAge(new Date(personEntity.getBirthdate())))
                 .build();
     }
 
@@ -91,7 +93,7 @@ public class PersonMapper {
                 .firstName(personEntity.getFirstName())
                 .lastName(personEntity.getLastName())
                 .phone(personEntity.getPhone())
-                .age(DateUtils.getAge(personEntity.getBirthdate()))
+                .age(DateUtils.getAge(new Date(personEntity.getBirthdate())))
                 .medicalRecord(medicalRecordMapper.toSimpleMedicalRecordDto(medicalRecordEntity))
                 .build();
     }

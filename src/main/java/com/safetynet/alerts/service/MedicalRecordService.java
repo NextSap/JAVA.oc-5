@@ -36,14 +36,14 @@ public class MedicalRecordService {
     }
 
     public MedicalRecordDto createMedicalRecord(MedicalRecordDto medicalRecordDto) {
-        long personId = personService.getPersonEntity(medicalRecordDto.getFirstName(), medicalRecordDto.getLastName()).getId();
+        long personId = personService.getPersonEntityByName(medicalRecordDto.getFirstName(), medicalRecordDto.getLastName()).getId();
         medicalRecordRepository.save(medicalRecordMapper.toMedicalRecordEntity(medicalRecordDto, personId));
         return medicalRecordDto;
     }
 
     public MedicalRecordDto updateMedicalRecord(MedicalRecordDto medicalRecordDto) {
         MedicalRecordEntity medicalRecordEntity = getMedicalRecordEntityByName(medicalRecordDto.getFirstName(), medicalRecordDto.getLastName());
-        long personId = personService.getPersonEntity(medicalRecordDto.getFirstName(), medicalRecordDto.getLastName()).getId();
+        long personId = personService.getPersonEntityByName(medicalRecordDto.getFirstName(), medicalRecordDto.getLastName()).getId();
         medicalRecordRepository.save(medicalRecordMapper.toMedicalRecordEntity(medicalRecordDto, personId));
         return medicalRecordDto;
     }

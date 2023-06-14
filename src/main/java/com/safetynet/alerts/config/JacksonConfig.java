@@ -54,10 +54,10 @@ public class JacksonConfig implements ApplicationRunner {
     public Entities mapPersonAndFireStationEntities(Models models) {
         Map<String, PersonEntity> personEntityMap = new HashMap<>();
         Map<Integer, FireStationEntity> fireStationEntityMap = new HashMap<>();
-        Map<String, Date> birthdateMap = new HashMap<>();
+        Map<String, Long> birthdateMap = new HashMap<>();
 
         for (MedicalRecordModel medicalRecord : models.medicalrecords)
-            birthdateMap.put(medicalRecord.getFirstName() + medicalRecord.getLastName(), DateUtils.getInstance().getDate(medicalRecord.getBirthdate()));
+            birthdateMap.put(medicalRecord.getFirstName() + medicalRecord.getLastName(), DateUtils.getInstance().getDate(medicalRecord.getBirthdate()).getTime());
 
 
         for (PersonModel person : models.persons) {

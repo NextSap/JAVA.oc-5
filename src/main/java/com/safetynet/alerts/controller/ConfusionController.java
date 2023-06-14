@@ -3,6 +3,7 @@ package com.safetynet.alerts.controller;
 import com.safetynet.alerts.dto.*;
 import com.safetynet.alerts.service.FireStationService;
 import com.safetynet.alerts.service.PersonService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,37 +26,37 @@ public class ConfusionController {
     }
 
     @GetMapping("/firestation")
-    public ResponseEntity<PeopleCoveredByFireStationDto> getPeopleCoveredByFireStation(@RequestParam("stationNumber") int stationNumber) {
+    public ResponseEntity<PeopleCoveredByFireStationDto> getPeopleCoveredByFireStation(@Valid  @RequestParam("stationNumber") int stationNumber) {
         return new ResponseEntity<>(fireStationService.getPeopleCoveredByFireStation(stationNumber), HttpStatus.OK);
     }
 
     @GetMapping("/childAlert")
-    public ResponseEntity<ChildAlertDto> getChildrenFromAddress(@RequestParam("address") String address) {
+    public ResponseEntity<ChildAlertDto> getChildrenFromAddress(@Valid @RequestParam("address") String address) {
         return new ResponseEntity<>(personService.getChildAlert(address), HttpStatus.OK);
     }
 
     @GetMapping("/phoneAlert")
-    public ResponseEntity<List<String>> getPhoneFromPeopleCoveredByFireStation(@RequestParam("firestation") int firestation) {
+    public ResponseEntity<List<String>> getPhoneFromPeopleCoveredByFireStation(@Valid @RequestParam("firestation") int firestation) {
         return new ResponseEntity<>(fireStationService.getPhoneFromPeopleCoveredByFireStation(firestation), HttpStatus.OK);
     }
 
     @GetMapping("/fire")
-    public ResponseEntity<FireDto> getPeopleAndFireStationFromAddress(@RequestParam("address") String address) {
+    public ResponseEntity<FireDto> getPeopleAndFireStationFromAddress(@Valid @RequestParam("address") String address) {
         return new ResponseEntity<>(fireStationService.getPeopleAndFireStationFromAddress(address), HttpStatus.OK);
     }
 
     @GetMapping("/flood/stations")
-    public ResponseEntity<List<HomeDto>> getPeopleCoveredByFireStations(@RequestParam("stations") Integer[] stations) {
+    public ResponseEntity<List<HomeDto>> getPeopleCoveredByFireStations(@Valid @RequestParam("stations") Integer[] stations) {
         return new ResponseEntity<>(fireStationService.getPeopleCoveredByFireStations(stations), HttpStatus.OK);
     }
 
     @GetMapping("/personInfo")
-    public ResponseEntity<PersonWithMedicalsAndEmailDto> getPersonInfo(@RequestParam("firstName") String firstName, @RequestParam("lastName") String lastName) {
+    public ResponseEntity<PersonWithMedicalsAndEmailDto> getPersonInfo(@Valid @RequestParam("firstName") String firstName, @RequestParam("lastName") String lastName) {
         return new ResponseEntity<>(personService.getPersonInfo(firstName, lastName), HttpStatus.OK);
     }
 
     @GetMapping("/communityEmail")
-    public ResponseEntity<List<String>> getCommunityEmail(@RequestParam("city") String city) {
+    public ResponseEntity<List<String>> getCommunityEmail(@Valid @RequestParam("city") String city) {
         return new ResponseEntity<>(personService.getCommunityEmail(city), HttpStatus.OK);
     }
 }

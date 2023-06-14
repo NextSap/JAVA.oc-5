@@ -27,7 +27,7 @@ public class PersonService {
         this.medicalRecordService = medicalRecordService;
     }
 
-    public PersonEntity getPersonEntity(String firstName, String lastName) {
+    public PersonEntity getPersonEntityByName(String firstName, String lastName) {
         return personRepository.findAll().stream()
                 .filter(person -> person.getFirstName().equals(firstName) && person.getLastName().equals(lastName))
                 .findFirst().orElseThrow(() -> new PersonNotFoundException("Person with name " + firstName + " " + lastName + " not found"));
@@ -54,14 +54,14 @@ public class PersonService {
     }
 
     public PersonDto updatePerson(PersonDto personDto) {
-        PersonEntity personEntity = getPersonEntity(personDto.getFirstName(), personDto.getLastName());
+        PersonEntity personEntity = getPersonEntityByName(personDto.getFirstName(), personDto.getLastName());
         PersonEntity updatedPersonDto = personRepository.save(personMapper.toPersonEntity(personDto, personEntity.getId()));
 
         return personMapper.toPersonDto(updatedPersonDto);
     }
 
     public void deletePerson(SimplePersonDto personDto) {
-        personRepository.delete(getPersonEntity(personDto.getFirstName(), personDto.getLastName()));
+        personRepository.delete(getPersonEntityByName(personDto.getFirstName(), personDto.getLastName()));
     }
 
     public ChildAlertDto getChildAlert(String address) {
@@ -75,7 +75,7 @@ public class PersonService {
     }
 
     public PersonWithMedicalsAndEmailDto getPersonInfo(String firstName, String lastName) {
-        PersonEntity personEntity = getPersonEntity(firstName, lastName);
+        PersonEntity personEntity = getPersonEntityByName(firstName, lastName);
         MedicalRecordEntity medicalRecordEntity = medicalRecordService.getMedicalRecordEntityByName(firstName, lastName);
         return personMapper.toPersonWithMedicalsAndEmailDto(personEntity, medicalRecordEntity);
     }

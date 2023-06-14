@@ -16,7 +16,7 @@ public class FireStationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    private int station;
+    private Integer station;
     @ElementCollection
     private List<String> addresses;
 
