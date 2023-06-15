@@ -1,7 +1,7 @@
 package com.safetynet.alerts.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.safetynet.alerts.exception.PersonNotFoundException;
+import com.safetynet.alerts.exception.PersonException;
 import com.safetynet.alerts.object.entity.*;
 import com.safetynet.alerts.object.model.FireStationModel;
 import com.safetynet.alerts.object.model.MedicalRecordModel;
@@ -101,7 +101,7 @@ public class JacksonConfig implements ApplicationRunner {
 
             Optional<PersonEntity> personEntity = personRepository.findAll().stream().filter(person -> person.getFirstName().equals(medicalrecord.getFirstName()) && person.getLastName().equals(medicalrecord.getLastName())).findFirst();
 
-            if(personEntity.isEmpty()) throw new PersonNotFoundException("Person not found");
+            if(personEntity.isEmpty()) throw new PersonException.PersonNotFoundException("Person not found");
 
             medicalRecordEntity.setPersonId(personEntity.get().getId());
 

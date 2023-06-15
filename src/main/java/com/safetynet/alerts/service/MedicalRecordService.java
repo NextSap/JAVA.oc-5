@@ -1,9 +1,8 @@
 package com.safetynet.alerts.service;
 
+import com.safetynet.alerts.exception.MedicalException;
 import com.safetynet.alerts.object.entity.MedicalRecordEntity;
 import com.safetynet.alerts.object.entity.PersonEntity;
-import com.safetynet.alerts.exception.MedicalRecordAlreadyExistException;
-import com.safetynet.alerts.exception.MedicalRecordNotFoundException;
 import com.safetynet.alerts.mapper.MedicalRecordMapper;
 import com.safetynet.alerts.object.request.MedicalRecordRequest;
 import com.safetynet.alerts.object.response.MedicalRecordResponse;
@@ -30,7 +29,7 @@ public class MedicalRecordService {
         return medicalRecordRepository.findAll().stream().filter(medicalRecordEntity -> {
             PersonEntity personEntity = personService.getPersonEntityById(medicalRecordEntity.getPersonId());
             return personEntity.getFirstName().equals(firstName) && personEntity.getLastName().equals(lastName);
-        }).findFirst().orElseThrow(() -> new MedicalRecordNotFoundException("Medical record with name " + firstName + " " + lastName + " not found"));
+        }).findFirst().orElseThrow(() -> new MedicalException.MedicalNotFoundException("Medical record of `" + firstName + " " + lastName + "` not found"));
     }
 
     public Optional<MedicalRecordEntity> getOptionalMedicalRecordEntityByName(String firstName, String lastName) {
@@ -65,6 +64,6 @@ public class MedicalRecordService {
 
     private void checkMedicalRecordExist(String firstName, String lastName) {
         if (getOptionalMedicalRecordEntityByName(firstName, lastName).isPresent())
-            throw new MedicalRecordAlreadyExistException("Medical record with name " + firstName + " " + lastName + " already exist");
+            throw new MedicalException.MedicalAlreadyExistsException("Medical record of `" + firstName + " " + lastName + "` already exist");
     }
 }

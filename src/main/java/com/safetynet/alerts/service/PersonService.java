@@ -3,8 +3,7 @@ package com.safetynet.alerts.service;
 import com.safetynet.alerts.object.entity.FireStationEntity;
 import com.safetynet.alerts.object.entity.MedicalRecordEntity;
 import com.safetynet.alerts.object.entity.PersonEntity;
-import com.safetynet.alerts.exception.PersonAlreadyExistException;
-import com.safetynet.alerts.exception.PersonNotFoundException;
+import com.safetynet.alerts.exception.PersonException;
 import com.safetynet.alerts.mapper.PersonMapper;
 import com.safetynet.alerts.object.request.PersonRequest;
 import com.safetynet.alerts.object.response.ChildAlertResponse;
@@ -40,11 +39,11 @@ public class PersonService {
     public PersonEntity getPersonEntityByName(String firstName, String lastName) {
         return personRepository.findAll().stream()
                 .filter(person -> person.getFirstName().equals(firstName) && person.getLastName().equals(lastName))
-                .findFirst().orElseThrow(() -> new PersonNotFoundException("Person with name " + firstName + " " + lastName + " not found"));
+                .findFirst().orElseThrow(() -> new PersonException.PersonNotFoundException("Person with name `" + firstName + " " + lastName + "` not found"));
     }
 
     public PersonEntity getPersonEntityById(long id) {
-        return personRepository.findById(id).orElseThrow(() -> new PersonNotFoundException("Person with id " + id + " not found"));
+        return personRepository.findById(id).orElseThrow(() -> new PersonException.PersonNotFoundException("Person with id `" + id + "` not found"));
     }
 
     private List<PersonEntity> getPeople() {
@@ -54,7 +53,7 @@ public class PersonService {
     public PersonResponse getPersonResponseByName(String firstName, String lastName) {
         PersonEntity personEntity = personRepository.findAll().stream()
                 .filter(person -> person.getFirstName().equals(firstName) && person.getLastName().equals(lastName))
-                .findFirst().orElseThrow(() -> new PersonNotFoundException("Person with name " + firstName + " " + lastName + " not found"));
+                .findFirst().orElseThrow(() -> new PersonException.PersonNotFoundException("Person with name `" + firstName + " " + lastName + "` not found"));
         return personMapper.toPersonResponse(personEntity);
     }
 
@@ -109,7 +108,7 @@ public class PersonService {
 
     private void checkPersonExists(String firstName, String lastName) {
         if (getOptionalPersonEntityByName(firstName, lastName).isPresent()) {
-            throw new PersonAlreadyExistException("Person with name " + firstName + " " + lastName + " already exists");
+            throw new PersonException.PersonAlreadyExistsException("Person with name `" + firstName + " " + lastName + "` already exists");
         }
     }
 }

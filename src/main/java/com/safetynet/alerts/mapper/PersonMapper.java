@@ -29,6 +29,7 @@ public class PersonMapper {
                 .email(personEntity.getEmail())
                 .address(addressMapper.toAddressDto(personEntity.getAddress()))
                 .birthdate(dateUtils.getFormattedDate(dateUtils.getDate(personEntity.getBirthdate())))
+                .age(dateUtils.getAge(dateUtils.getDate(personEntity.getBirthdate())))
                 .build();
     }
 
@@ -41,6 +42,7 @@ public class PersonMapper {
                 .address(addressMapper.toAddressDto(personEntity.getAddress()))
                 .birthdate(dateUtils.getFormattedDate(dateUtils.getDate(personEntity.getBirthdate())))
                 .medicalRecord(medicalRecordMapper.toMedicalRecordResponse(medicalRecordEntity))
+                .age(dateUtils.getAge(dateUtils.getDate(personEntity.getBirthdate())))
                 .build();
     }
 

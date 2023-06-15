@@ -1,11 +1,10 @@
 package com.safetynet.alerts.service;
 
-import com.safetynet.alerts.exception.PersonNotFoundException;
+import com.safetynet.alerts.exception.FireStationException;
+import com.safetynet.alerts.exception.PersonException;
 import com.safetynet.alerts.object.entity.FireStationEntity;
 import com.safetynet.alerts.object.entity.MedicalRecordEntity;
 import com.safetynet.alerts.object.entity.PersonEntity;
-import com.safetynet.alerts.exception.FireStationAlreadyExistException;
-import com.safetynet.alerts.exception.FireStationNotFoundException;
 import com.safetynet.alerts.mapper.AddressMapper;
 import com.safetynet.alerts.mapper.FireStationMapper;
 import com.safetynet.alerts.mapper.PersonMapper;
@@ -41,13 +40,13 @@ public class FireStationService {
     public FireStationEntity getFireStationEntityByStreet(String street) {
         return fireStationRepository.findAll().stream()
                 .filter(fireStation -> fireStation.getAddresses().contains(street))
-                .findFirst().orElseThrow(() -> new FireStationNotFoundException("FireStation with address " + street + " not found"));
+                .findFirst().orElseThrow(() -> new FireStationException.FireStationNotFoundException("FireStation with street `" + street + "` not found"));
     }
 
     public FireStationEntity getFireStationEntityByStation(int station) {
         return fireStationRepository.findAll().stream()
                 .filter(fireStation -> fireStation.getStation() == station)
-                .findFirst().orElseThrow(() -> new FireStationNotFoundException("FireStation with station " + station + " not found"));
+                .findFirst().orElseThrow(() -> new FireStationException.FireStationNotFoundException("FireStation with station `" + station + "` not found"));
     }
 
     public Optional<FireStationEntity> getOptionalFireStationEntityByStation(int station) {
@@ -105,7 +104,7 @@ public class FireStationService {
                 Map<PersonEntity, MedicalRecordEntity> people = getPeopleAndMedicalRecordFromStreet(street);
                 Optional<PersonEntity> personEntity = people.keySet().stream().findFirst();
 
-                if (personEntity.isEmpty()) throw new PersonNotFoundException("No person found for this address");
+                if (personEntity.isEmpty()) throw new PersonException.PersonNotFoundException("No person found for this address");
 
                 HomeResponse homeDto = HomeResponse.builder().address(addressMapper.toAddressDto(personEntity.get().getAddress()))
                         .people(personMapper.toPersonWithMedicalsResponseList(people)).build();
@@ -137,6 +136,6 @@ public class FireStationService {
 
     private void checkFireStationExists(int station) {
         if (getOptionalFireStationEntityByStation(station).isPresent())
-            throw new FireStationAlreadyExistException("FireStation with station " + station + " already exist");
+            throw new FireStationException.FireStationAlreadyExistsException("FireStation with station `" + station + "` already exist");
     }
 }
