@@ -91,7 +91,7 @@ public class FireStationService {
         FireStationEntity fireStationEntity = getFireStationEntityByStation(fireStation);
         List<PersonEntity> people = personService.getPeopleFromFireStation(fireStationEntity);
 
-        return personMapper.toPeopleCoveredByFireStationDto(people);
+        return personMapper.toPeopleCoveredByFireStationResponse(people);
     }
 
     public List<HomeResponse> getPeopleCoveredByFireStations(Integer[] fireStations) {
@@ -106,7 +106,7 @@ public class FireStationService {
 
                 if (personEntity.isEmpty()) throw new PersonException.PersonNotFoundException("No person found for this address");
 
-                HomeResponse homeDto = HomeResponse.builder().address(addressMapper.toAddressDto(personEntity.get().getAddress()))
+                HomeResponse homeDto = HomeResponse.builder().address(addressMapper.toAddressResponse(personEntity.get().getAddress()))
                         .people(personMapper.toPersonWithMedicalsResponseList(people)).build();
                 homes.add(homeDto);
             }

@@ -11,7 +11,7 @@ public class AddressMapper {
     private AddressMapper() {
     }
 
-    public AddressResponse toAddressDto(AddressEntity addressEntity) {
+    public AddressResponse toAddressResponse(AddressEntity addressEntity) {
         return AddressResponse.builder()
                 .street(addressEntity.getStreet())
                 .city(addressEntity.getCity())

@@ -9,7 +9,7 @@ import com.safetynet.alerts.object.request.PersonRequest;
 import com.safetynet.alerts.object.response.ChildAlertResponse;
 import com.safetynet.alerts.object.response.PersonResponse;
 import com.safetynet.alerts.repository.PersonRepository;
-import com.safetynet.alerts.utils.DateUtils;
+import com.safetynet.alerts.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;

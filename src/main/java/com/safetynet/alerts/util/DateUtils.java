@@ -1,4 +1,4 @@
-package com.safetynet.alerts.utils;
+package com.safetynet.alerts.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

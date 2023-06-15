@@ -47,7 +47,7 @@ public class MedicalRecordService {
         long personId = personService.getPersonEntityByName(medicalRecordRequest.getFirstName(), medicalRecordRequest.getLastName()).getId();
 
         MedicalRecordEntity medicalRecordEntity = medicalRecordRepository.save(medicalRecordMapper.toMedicalRecordEntity(medicalRecordRequest, personId));
-        return medicalRecordMapper.toMedicalRecordResponse(medicalRecordEntity);
+        return medicalRecordMapper.toMedicalRecordResponse(medicalRecordEntity, medicalRecordRequest.getFirstName(), medicalRecordRequest.getLastName());
     }
 
     public MedicalRecordResponse updateMedicalRecord(MedicalRecordRequest medicalRecordRequest) {
@@ -55,7 +55,7 @@ public class MedicalRecordService {
 
         long personId = personService.getPersonEntityByName(medicalRecordRequest.getFirstName(), medicalRecordRequest.getLastName()).getId();
         MedicalRecordEntity medicalRecordEntity = medicalRecordRepository.save(medicalRecordMapper.toMedicalRecordEntity(medicalRecordRequest, personId));
-        return medicalRecordMapper.toMedicalRecordResponse(medicalRecordEntity);
+        return medicalRecordMapper.toMedicalRecordResponse(medicalRecordEntity, medicalRecordRequest.getFirstName(), medicalRecordRequest.getLastName());
     }
 
     public void deleteMedicalRecord(String firstName, String lastName) {

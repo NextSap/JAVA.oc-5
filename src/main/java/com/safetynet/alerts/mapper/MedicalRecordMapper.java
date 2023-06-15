@@ -14,8 +14,10 @@ public class MedicalRecordMapper {
     private MedicalRecordMapper() {
     }
 
-    public MedicalRecordResponse toMedicalRecordResponse(MedicalRecordEntity medicalRecordEntity) {
+    public MedicalRecordResponse toMedicalRecordResponse(MedicalRecordEntity medicalRecordEntity, String firstName, String lastName) {
         return MedicalRecordResponse.builder()
+                .firstName(firstName)
+                .lastName(lastName)
                 .medications(medicalRecordEntity.getMedications().stream()
                         .map(medicationMapper::toMedicationResponse)
                         .collect(Collectors.toList()))

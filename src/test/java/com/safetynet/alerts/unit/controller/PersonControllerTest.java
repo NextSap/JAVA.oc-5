@@ -6,7 +6,7 @@ import com.safetynet.alerts.object.request.PersonRequest;
 import com.safetynet.alerts.object.response.AddressResponse;
 import com.safetynet.alerts.object.response.PersonResponse;
 import com.safetynet.alerts.service.PersonService;
-import com.safetynet.alerts.utils.DateUtils;
+import com.safetynet.alerts.util.DateUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

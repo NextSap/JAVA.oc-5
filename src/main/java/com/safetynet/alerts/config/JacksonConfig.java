@@ -9,7 +9,7 @@ import com.safetynet.alerts.object.model.PersonModel;
 import com.safetynet.alerts.repository.FireStationRepository;
 import com.safetynet.alerts.repository.MedicalRecordRepository;
 import com.safetynet.alerts.repository.PersonRepository;
-import com.safetynet.alerts.utils.DateUtils;
+import com.safetynet.alerts.util.DateUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
