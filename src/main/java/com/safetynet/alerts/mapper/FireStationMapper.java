@@ -1,7 +1,12 @@
 package com.safetynet.alerts.mapper;
 
-import com.safetynet.alerts.dto.FireStationDto;
-import com.safetynet.alerts.entity.FireStationEntity;
+import com.safetynet.alerts.object.entity.FireStationEntity;
+import com.safetynet.alerts.object.request.FireStationRequest;
+import com.safetynet.alerts.object.response.FireResponse;
+import com.safetynet.alerts.object.response.FireStationResponse;
+import com.safetynet.alerts.object.response.PersonResponse;
+
+import java.util.List;
 
 public class FireStationMapper {
 
@@ -10,25 +15,32 @@ public class FireStationMapper {
     private FireStationMapper() {
     }
 
-    public FireStationEntity toFireStationEntity(FireStationDto fireStationDto) {
+    public FireStationEntity toFireStationEntity(FireStationRequest fireStationRequest) {
         return FireStationEntity.builder()
-                .addresses(fireStationDto.getAddresses())
-                .station(fireStationDto.getStation())
+                .addresses(fireStationRequest.getAddresses())
+                .station(fireStationRequest.getStation())
                 .build();
     }
 
-    public FireStationEntity toFireStationEntity(FireStationDto fireStationDto, long id) {
+    public FireStationEntity toFireStationEntity(FireStationRequest fireStationRequest, long id) {
         return FireStationEntity.builder()
                 .id(id)
-                .addresses(fireStationDto.getAddresses())
-                .station(fireStationDto.getStation())
+                .addresses(fireStationRequest.getAddresses())
+                .station(fireStationRequest.getStation())
                 .build();
     }
 
-    public FireStationDto toFireStationDto(FireStationEntity fireStationEntity) {
-        return FireStationDto.builder()
+    public FireStationResponse toFireStationResponse(FireStationEntity fireStationEntity) {
+        return FireStationResponse.builder()
                 .addresses(fireStationEntity.getAddresses())
                 .station(fireStationEntity.getStation())
+                .build();
+    }
+
+    public FireResponse toFireResponse(int station, List<PersonResponse> people) {
+        return FireResponse.builder()
+                .station(station)
+                .people(people)
                 .build();
     }
 

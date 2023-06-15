@@ -1,6 +1,7 @@
 package com.safetynet.alerts.controller;
 
-import com.safetynet.alerts.dto.FireStationDto;
+import com.safetynet.alerts.object.request.FireStationRequest;
+import com.safetynet.alerts.object.response.FireStationResponse;
 import com.safetynet.alerts.service.FireStationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +21,13 @@ public class FireStationController {
     }
 
     @PostMapping
-    public ResponseEntity<FireStationDto> createFireStation(@Valid @RequestBody FireStationDto fireStation) {
-        return new ResponseEntity<>(fireStationService.createFireStation(fireStation), HttpStatus.CREATED);
+    public ResponseEntity<FireStationResponse> createFireStation(@Valid @RequestBody FireStationRequest fireStationRequest) {
+        return new ResponseEntity<>(fireStationService.createFireStation(fireStationRequest), HttpStatus.CREATED);
     }
 
     @PutMapping
-    public ResponseEntity<FireStationDto> updateFireStation(@Valid @RequestBody FireStationDto fireStation) {
-        return new ResponseEntity<>(fireStationService.updateFireStation(fireStation), HttpStatus.OK);
+    public ResponseEntity<FireStationResponse> updateFireStation(@Valid @RequestBody FireStationRequest fireStationRequest) {
+        return new ResponseEntity<>(fireStationService.updateFireStation(fireStationRequest), HttpStatus.OK);
     }
 
     @DeleteMapping

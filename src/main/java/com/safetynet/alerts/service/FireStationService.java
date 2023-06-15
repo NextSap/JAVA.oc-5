@@ -1,24 +1,24 @@
 package com.safetynet.alerts.service;
 
-import com.safetynet.alerts.dto.FireDto;
-import com.safetynet.alerts.dto.FireStationDto;
-import com.safetynet.alerts.dto.HomeDto;
-import com.safetynet.alerts.dto.PeopleCoveredByFireStationDto;
-import com.safetynet.alerts.entity.FireStationEntity;
-import com.safetynet.alerts.entity.MedicalRecordEntity;
-import com.safetynet.alerts.entity.PersonEntity;
+import com.safetynet.alerts.exception.PersonNotFoundException;
+import com.safetynet.alerts.object.entity.FireStationEntity;
+import com.safetynet.alerts.object.entity.MedicalRecordEntity;
+import com.safetynet.alerts.object.entity.PersonEntity;
+import com.safetynet.alerts.exception.FireStationAlreadyExistException;
 import com.safetynet.alerts.exception.FireStationNotFoundException;
 import com.safetynet.alerts.mapper.AddressMapper;
 import com.safetynet.alerts.mapper.FireStationMapper;
 import com.safetynet.alerts.mapper.PersonMapper;
+import com.safetynet.alerts.object.request.FireStationRequest;
+import com.safetynet.alerts.object.response.FireResponse;
+import com.safetynet.alerts.object.response.FireStationResponse;
+import com.safetynet.alerts.object.response.HomeResponse;
+import com.safetynet.alerts.object.response.PeopleCoveredByFireStationResponse;
 import com.safetynet.alerts.repository.FireStationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class FireStationService {
@@ -50,17 +50,24 @@ public class FireStationService {
                 .findFirst().orElseThrow(() -> new FireStationNotFoundException("FireStation with station " + station + " not found"));
     }
 
-    public FireStationDto createFireStation(FireStationDto fireStationDto) {
-        FireStationEntity fireStationEntity = fireStationMapper.toFireStationEntity(fireStationDto);
-        fireStationRepository.save(fireStationEntity);
-        return fireStationDto;
+    public Optional<FireStationEntity> getOptionalFireStationEntityByStation(int station) {
+        return fireStationRepository.findAll().stream()
+                .filter(fireStation -> fireStation.getStation() == station)
+                .findFirst();
     }
 
-    public FireStationDto updateFireStation(FireStationDto fireStationDto) {
-        FireStationEntity fireStationEntity = getFireStationEntityByStation(fireStationDto.getStation());
-        FireStationEntity updatedFireStationEntity = fireStationRepository.save(fireStationMapper.toFireStationEntity(fireStationDto, fireStationEntity.getId()));
+    public FireStationResponse createFireStation(FireStationRequest fireStationRequest) {
+        checkFireStationExists(fireStationRequest.getStation());
 
-        return fireStationMapper.toFireStationDto(updatedFireStationEntity);
+        FireStationEntity fireStationEntity = fireStationRepository.save(fireStationMapper.toFireStationEntity(fireStationRequest));
+        return fireStationMapper.toFireStationResponse(fireStationEntity);
+    }
+
+    public FireStationResponse updateFireStation(FireStationRequest fireStationRequest) {
+        FireStationEntity fireStationEntity = getFireStationEntityByStation(fireStationRequest.getStation());
+        FireStationEntity updatedFireStationEntity = fireStationRepository.save(fireStationMapper.toFireStationEntity(fireStationRequest, fireStationEntity.getId()));
+
+        return fireStationMapper.toFireStationResponse(updatedFireStationEntity);
     }
 
     public void deleteFireStation(int station) {
@@ -68,11 +75,11 @@ public class FireStationService {
         fireStationRepository.delete(fireStationEntity);
     }
 
-    public FireDto getPeopleAndFireStationFromAddress(String street) {
+    public FireResponse getPeopleAndFireStationFromAddress(String street) {
         FireStationEntity fireStationEntity = getFireStationEntityByStreet(street);
         Map<PersonEntity, MedicalRecordEntity> peopleWithMedicalEntity = getPeopleAndMedicalRecordFromStreet(street);
-        return FireDto.builder().station(fireStationEntity.getStation())
-                .people(personMapper.toPersonWithMedicalsDtoList(peopleWithMedicalEntity)).build();
+
+        return fireStationMapper.toFireResponse(fireStationEntity.getStation(), personMapper.toPersonWithMedicalsResponseList(peopleWithMedicalEntity));
     }
 
     public List<String> getPhoneFromPeopleCoveredByFireStation(int fireStation) {
@@ -81,21 +88,27 @@ public class FireStationService {
         return people.stream().map(PersonEntity::getPhone).toList();
     }
 
-    public PeopleCoveredByFireStationDto getPeopleCoveredByFireStation(int fireStation) {
+    public PeopleCoveredByFireStationResponse getPeopleCoveredByFireStation(int fireStation) {
         FireStationEntity fireStationEntity = getFireStationEntityByStation(fireStation);
         List<PersonEntity> people = personService.getPeopleFromFireStation(fireStationEntity);
+
         return personMapper.toPeopleCoveredByFireStationDto(people);
     }
 
-    public List<HomeDto> getPeopleCoveredByFireStations(Integer[] fireStations) {
-        List<HomeDto> homes = new ArrayList<>();
+    public List<HomeResponse> getPeopleCoveredByFireStations(Integer[] fireStations) {
+        List<HomeResponse> homes = new ArrayList<>();
 
         for (int fireStation : fireStations) {
             FireStationEntity fireStationEntity = getFireStationEntityByStation(fireStation);
+
             for (String street : fireStationEntity.getAddresses()) {
                 Map<PersonEntity, MedicalRecordEntity> people = getPeopleAndMedicalRecordFromStreet(street);
-                HomeDto homeDto = HomeDto.builder().address(addressMapper.toAddressDto(people.keySet().stream().findFirst().get().getAddress()))
-                        .people(personMapper.toPersonWithMedicalsDtoList(people)).build();
+                Optional<PersonEntity> personEntity = people.keySet().stream().findFirst();
+
+                if (personEntity.isEmpty()) throw new PersonNotFoundException("No person found for this address");
+
+                HomeResponse homeDto = HomeResponse.builder().address(addressMapper.toAddressDto(personEntity.get().getAddress()))
+                        .people(personMapper.toPersonWithMedicalsResponseList(people)).build();
                 homes.add(homeDto);
             }
         }
@@ -120,5 +133,10 @@ public class FireStationService {
             peopleAndMedicalRecord.put(person, medicalRecordService.getMedicalRecordEntityByName(person.getFirstName(), person.getLastName()));
 
         return peopleAndMedicalRecord;
+    }
+
+    private void checkFireStationExists(int station) {
+        if (getOptionalFireStationEntityByStation(station).isPresent())
+            throw new FireStationAlreadyExistException("FireStation with station " + station + " already exist");
     }
 }

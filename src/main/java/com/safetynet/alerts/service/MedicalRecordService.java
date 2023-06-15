@@ -1,21 +1,23 @@
 package com.safetynet.alerts.service;
 
-import com.safetynet.alerts.dto.MedicalRecordDto;
-import com.safetynet.alerts.dto.SimpleMedicalRecordDto;
-import com.safetynet.alerts.entity.MedicalRecordEntity;
-import com.safetynet.alerts.entity.PersonEntity;
+import com.safetynet.alerts.object.entity.MedicalRecordEntity;
+import com.safetynet.alerts.object.entity.PersonEntity;
+import com.safetynet.alerts.exception.MedicalRecordAlreadyExistException;
 import com.safetynet.alerts.exception.MedicalRecordNotFoundException;
 import com.safetynet.alerts.mapper.MedicalRecordMapper;
+import com.safetynet.alerts.object.request.MedicalRecordRequest;
+import com.safetynet.alerts.object.response.MedicalRecordResponse;
 import com.safetynet.alerts.repository.MedicalRecordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class MedicalRecordService {
 
     private final MedicalRecordRepository medicalRecordRepository;
     private final PersonService personService;
-
     private final MedicalRecordMapper medicalRecordMapper = MedicalRecordMapper.getInstance();
 
     @Autowired
@@ -31,24 +33,38 @@ public class MedicalRecordService {
         }).findFirst().orElseThrow(() -> new MedicalRecordNotFoundException("Medical record with name " + firstName + " " + lastName + " not found"));
     }
 
-    public SimpleMedicalRecordDto getMedicalRecord(String firstName, String lastName) {
-        return medicalRecordMapper.toSimpleMedicalRecordDto(getMedicalRecordEntityByName(firstName, lastName));
+    public Optional<MedicalRecordEntity> getOptionalMedicalRecordEntityByName(String firstName, String lastName) {
+        return medicalRecordRepository.findAll().stream().filter(medicalRecordEntity -> {
+            PersonEntity personEntity = personService.getPersonEntityById(medicalRecordEntity.getPersonId());
+            return personEntity.getFirstName().equals(firstName) && personEntity.getLastName().equals(lastName);
+        }).findFirst();
     }
 
-    public MedicalRecordDto createMedicalRecord(MedicalRecordDto medicalRecordDto) {
-        long personId = personService.getPersonEntityByName(medicalRecordDto.getFirstName(), medicalRecordDto.getLastName()).getId();
-        medicalRecordRepository.save(medicalRecordMapper.toMedicalRecordEntity(medicalRecordDto, personId));
-        return medicalRecordDto;
+    public MedicalRecordResponse getMedicalRecord(String firstName, String lastName) {
+        return medicalRecordMapper.toSimpleMedicalRecordResponse(getMedicalRecordEntityByName(firstName, lastName));
     }
 
-    public MedicalRecordDto updateMedicalRecord(MedicalRecordDto medicalRecordDto) {
-        MedicalRecordEntity medicalRecordEntity = getMedicalRecordEntityByName(medicalRecordDto.getFirstName(), medicalRecordDto.getLastName());
-        long personId = personService.getPersonEntityByName(medicalRecordDto.getFirstName(), medicalRecordDto.getLastName()).getId();
-        medicalRecordRepository.save(medicalRecordMapper.toMedicalRecordEntity(medicalRecordDto, personId));
-        return medicalRecordDto;
+    public MedicalRecordResponse createMedicalRecord(MedicalRecordRequest medicalRecordRequest) {
+        long personId = personService.getPersonEntityByName(medicalRecordRequest.getFirstName(), medicalRecordRequest.getLastName()).getId();
+
+        MedicalRecordEntity medicalRecordEntity = medicalRecordRepository.save(medicalRecordMapper.toMedicalRecordEntity(medicalRecordRequest, personId));
+        return medicalRecordMapper.toMedicalRecordResponse(medicalRecordEntity);
+    }
+
+    public MedicalRecordResponse updateMedicalRecord(MedicalRecordRequest medicalRecordRequest) {
+        checkMedicalRecordExist(medicalRecordRequest.getFirstName(), medicalRecordRequest.getLastName());
+
+        long personId = personService.getPersonEntityByName(medicalRecordRequest.getFirstName(), medicalRecordRequest.getLastName()).getId();
+        MedicalRecordEntity medicalRecordEntity = medicalRecordRepository.save(medicalRecordMapper.toMedicalRecordEntity(medicalRecordRequest, personId));
+        return medicalRecordMapper.toMedicalRecordResponse(medicalRecordEntity);
     }
 
     public void deleteMedicalRecord(String firstName, String lastName) {
         medicalRecordRepository.delete(getMedicalRecordEntityByName(firstName, lastName));
+    }
+
+    private void checkMedicalRecordExist(String firstName, String lastName) {
+        if (getOptionalMedicalRecordEntityByName(firstName, lastName).isPresent())
+            throw new MedicalRecordAlreadyExistException("Medical record with name " + firstName + " " + lastName + " already exist");
     }
 }

@@ -1,7 +1,8 @@
 package com.safetynet.alerts.mapper;
 
-import com.safetynet.alerts.dto.AddressDto;
-import com.safetynet.alerts.entity.AddressEntity;
+import com.safetynet.alerts.object.entity.AddressEntity;
+import com.safetynet.alerts.object.request.AddressRequest;
+import com.safetynet.alerts.object.response.AddressResponse;
 
 public class AddressMapper {
 
@@ -10,19 +11,19 @@ public class AddressMapper {
     private AddressMapper() {
     }
 
-    public AddressDto toAddressDto(AddressEntity addressEntity) {
-        return AddressDto.builder()
+    public AddressResponse toAddressDto(AddressEntity addressEntity) {
+        return AddressResponse.builder()
                 .street(addressEntity.getStreet())
                 .city(addressEntity.getCity())
                 .zip(addressEntity.getZip())
                 .build();
     }
 
-    public AddressEntity toAddressEntity(AddressDto addressDto) {
+    public AddressEntity toAddressEntity(AddressRequest addressRequest) {
         return AddressEntity.builder()
-                .street(addressDto.getStreet())
-                .city(addressDto.getCity())
-                .zip(addressDto.getZip())
+                .street(addressRequest.getStreet())
+                .city(addressRequest.getCity())
+                .zip(addressRequest.getZip())
                 .build();
     }
 

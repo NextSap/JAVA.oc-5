@@ -1,6 +1,6 @@
 package com.safetynet.alerts.repository;
 
-import com.safetynet.alerts.entity.PersonEntity;
+import com.safetynet.alerts.object.entity.PersonEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

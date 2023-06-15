@@ -1,10 +1,11 @@
 package com.safetynet.alerts.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.safetynet.alerts.entity.*;
-import com.safetynet.alerts.model.FireStationModel;
-import com.safetynet.alerts.model.MedicalRecordModel;
-import com.safetynet.alerts.model.PersonModel;
+import com.safetynet.alerts.exception.PersonNotFoundException;
+import com.safetynet.alerts.object.entity.*;
+import com.safetynet.alerts.object.model.FireStationModel;
+import com.safetynet.alerts.object.model.MedicalRecordModel;
+import com.safetynet.alerts.object.model.PersonModel;
 import com.safetynet.alerts.repository.FireStationRepository;
 import com.safetynet.alerts.repository.MedicalRecordRepository;
 import com.safetynet.alerts.repository.PersonRepository;
@@ -98,7 +99,11 @@ public class JacksonConfig implements ApplicationRunner {
         for (MedicalRecordModel medicalrecord : medicalrecords) {
             MedicalRecordEntity medicalRecordEntity = new MedicalRecordEntity();
 
-            medicalRecordEntity.setPersonId(personRepository.findAll().stream().filter(person -> person.getFirstName().equals(medicalrecord.getFirstName()) && person.getLastName().equals(medicalrecord.getLastName())).findFirst().get().getId());
+            Optional<PersonEntity> personEntity = personRepository.findAll().stream().filter(person -> person.getFirstName().equals(medicalrecord.getFirstName()) && person.getLastName().equals(medicalrecord.getLastName())).findFirst();
+
+            if(personEntity.isEmpty()) throw new PersonNotFoundException("Person not found");
+
+            medicalRecordEntity.setPersonId(personEntity.get().getId());
 
             medicalRecordEntity.setMedications(Arrays.stream(medicalrecord.getMedications()).map(medication -> {
                 String[] medicationSplit = medication.split(":");

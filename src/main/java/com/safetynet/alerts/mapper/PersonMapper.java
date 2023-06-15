@@ -1,12 +1,12 @@
 package com.safetynet.alerts.mapper;
 
-import com.safetynet.alerts.dto.*;
-import com.safetynet.alerts.entity.MedicalRecordEntity;
-import com.safetynet.alerts.entity.PersonEntity;
+import com.safetynet.alerts.object.entity.MedicalRecordEntity;
+import com.safetynet.alerts.object.entity.PersonEntity;
+import com.safetynet.alerts.object.request.PersonRequest;
+import com.safetynet.alerts.object.response.PeopleCoveredByFireStationResponse;
+import com.safetynet.alerts.object.response.PersonResponse;
 import com.safetynet.alerts.utils.DateUtils;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -21,8 +21,8 @@ public class PersonMapper {
     private PersonMapper() {
     }
 
-    public PersonDto toPersonDto(PersonEntity personEntity) {
-        return PersonDto.builder()
+    public PersonResponse toPersonResponse(PersonEntity personEntity) {
+        return PersonResponse.builder()
                 .firstName(personEntity.getFirstName())
                 .lastName(personEntity.getLastName())
                 .phone(personEntity.getPhone())
@@ -32,87 +32,77 @@ public class PersonMapper {
                 .build();
     }
 
-    public PersonEntity toPersonEntity(PersonDto personDto) {
-        return PersonEntity.builder()
-                .firstName(personDto.getFirstName())
-                .lastName(personDto.getLastName())
-                .phone(personDto.getPhone())
-                .email(personDto.getEmail())
-                .address(addressMapper.toAddressEntity(personDto.getAddress()))
-                .birthdate(DateUtils.getInstance().getDate(personDto.getBirthdate()).getTime())
+    public PersonResponse toPersonResponse(PersonEntity personEntity, MedicalRecordEntity medicalRecordEntity) {
+        return PersonResponse.builder()
+                .firstName(personEntity.getFirstName())
+                .lastName(personEntity.getLastName())
+                .phone(personEntity.getPhone())
+                .email(personEntity.getEmail())
+                .address(addressMapper.toAddressDto(personEntity.getAddress()))
+                .birthdate(dateUtils.getFormattedDate(dateUtils.getDate(personEntity.getBirthdate())))
+                .medicalRecord(medicalRecordMapper.toMedicalRecordResponse(medicalRecordEntity))
                 .build();
     }
 
-    public PersonEntity toPersonEntity(PersonDto personDto, long id) {
+    public PersonEntity toPersonEntity(PersonRequest personRequest) {
+        return PersonEntity.builder()
+                .firstName(personRequest.getFirstName())
+                .lastName(personRequest.getLastName())
+                .phone(personRequest.getPhone())
+                .email(personRequest.getEmail())
+                .address(addressMapper.toAddressEntity(personRequest.getAddress()))
+                .birthdate(DateUtils.getInstance().getDate(personRequest.getBirthdate()).getTime())
+                .build();
+    }
+
+    public PersonEntity toPersonEntity(PersonRequest personRequest, long id) {
         return PersonEntity.builder()
                 .id(id)
-                .firstName(personDto.getFirstName())
-                .lastName(personDto.getLastName())
-                .phone(personDto.getPhone())
-                .email(personDto.getEmail())
-                .address(addressMapper.toAddressEntity(personDto.getAddress()))
-                .birthdate(DateUtils.getInstance().getDate(personDto.getBirthdate()).getTime())
+                .firstName(personRequest.getFirstName())
+                .lastName(personRequest.getLastName())
+                .phone(personRequest.getPhone())
+                .email(personRequest.getEmail())
+                .address(addressMapper.toAddressEntity(personRequest.getAddress()))
+                .birthdate(DateUtils.getInstance().getDate(personRequest.getBirthdate()).getTime())
                 .build();
     }
 
-    public ChildDto toChildDto(PersonEntity personEntity) {
-        return ChildDto.builder()
-                .firstName(personEntity.getFirstName())
-                .lastName(personEntity.getLastName())
-                .age(DateUtils.getAge(new Date(personEntity.getBirthdate())))
-                .build();
+    public List<PersonResponse> toPersonResponseList(List<PersonEntity> personEntityList) {
+        return personEntityList.stream().map(this::toPersonResponse).collect(Collectors.toList());
     }
 
-    public List<ChildDto> toChildDtoList(List<PersonEntity> personEntityList) {
-        return personEntityList.stream().map(this::toChildDto).collect(Collectors.toList());
-    }
-
-    public SimplePersonDto toSimplePersonDto(PersonEntity personEntity) {
-        return SimplePersonDto.builder()
-                .firstName(personEntity.getFirstName())
-                .lastName(personEntity.getLastName())
-                .build();
-    }
-
-    public List<SimplePersonDto> toSimplePersonDtoList(List<PersonEntity> personEntityList) {
-        return personEntityList.stream().map(this::toSimplePersonDto).collect(Collectors.toList());
-    }
-
-    public PersonWithMedicalsAndEmailDto toPersonWithMedicalsAndEmailDto(PersonEntity personEntity, MedicalRecordEntity medicalRecordEntity) {
-        return PersonWithMedicalsAndEmailDto.builder()
+    public PersonResponse toPersonWithMedicalsAndEmailResponse(PersonEntity personEntity, MedicalRecordEntity medicalRecordEntity) {
+        return PersonResponse.builder()
                 .firstName(personEntity.getFirstName())
                 .lastName(personEntity.getLastName())
                 .email(personEntity.getEmail())
                 .address(addressMapper.toAddressDto(personEntity.getAddress()))
-                .medicalRecord(medicalRecordMapper.toSimpleMedicalRecordDto(medicalRecordEntity))
+                .birthdate(dateUtils.getFormattedDate(dateUtils.getDate(personEntity.getBirthdate())))
+                .medicalRecord(medicalRecordMapper.toMedicalRecordResponse(medicalRecordEntity))
+                .age(dateUtils.getAge(dateUtils.getDate(personEntity.getBirthdate())))
                 .build();
     }
 
-    public PersonWithMedicalsDto toPersonWithMedicalsDto(PersonEntity personEntity, MedicalRecordEntity medicalRecordEntity) {
-        return PersonWithMedicalsDto.builder()
+    public PersonResponse toPersonWithMedicalsResponse(PersonEntity personEntity, MedicalRecordEntity medicalRecordEntity) {
+        return PersonResponse.builder()
                 .firstName(personEntity.getFirstName())
                 .lastName(personEntity.getLastName())
-                .phone(personEntity.getPhone())
-                .age(DateUtils.getAge(new Date(personEntity.getBirthdate())))
-                .medicalRecord(medicalRecordMapper.toSimpleMedicalRecordDto(medicalRecordEntity))
+                .address(addressMapper.toAddressDto(personEntity.getAddress()))
+                .birthdate(dateUtils.getFormattedDate(dateUtils.getDate(personEntity.getBirthdate())))
+                .medicalRecord(medicalRecordMapper.toMedicalRecordResponse(medicalRecordEntity))
+                .age(dateUtils.getAge(dateUtils.getDate(personEntity.getBirthdate())))
                 .build();
     }
 
-    public List<PersonWithMedicalsDto> toPersonWithMedicalsDtoList(Map<PersonEntity, MedicalRecordEntity> personWithMedicalEntityList) {
-        List<PersonWithMedicalsDto> personWithMedicalsDtoList = new ArrayList<>();
-        personWithMedicalEntityList.forEach((personEntity, medicalRecordEntity) -> personWithMedicalsDtoList.add(toPersonWithMedicalsDto(personEntity, medicalRecordEntity)));
-        return personWithMedicalsDtoList;
+    public List<PersonResponse> toPersonWithMedicalsResponseList(Map<PersonEntity, MedicalRecordEntity> personMedicalRecordEntityMap) {
+       return personMedicalRecordEntityMap.entrySet().stream().map(entry -> toPersonWithMedicalsResponse(entry.getKey(), entry.getValue())).collect(Collectors.toList());
     }
 
-    public List<PersonDto> toPersonDtoList(List<PersonEntity> personEntityList) {
-        return personEntityList.stream().map(this::toPersonDto).collect(Collectors.toList());
-    }
-
-    public PeopleCoveredByFireStationDto toPeopleCoveredByFireStationDto(List<PersonEntity> personEntityList) {
-        return PeopleCoveredByFireStationDto.builder()
-                .people(toPersonDtoList(personEntityList))
-                .adults((int) personEntityList.stream().filter(personEntity -> DateUtils.getInstance().isMajor(personEntity.getBirthdate())).count())
-                .children((int) personEntityList.stream().filter(personEntity -> !DateUtils.getInstance().isMajor(personEntity.getBirthdate())).count())
+    public PeopleCoveredByFireStationResponse toPeopleCoveredByFireStationDto(List<PersonEntity> people) {
+        return PeopleCoveredByFireStationResponse.builder()
+                .people(toPersonResponseList(people))
+                .adults((int) people.stream().filter(person -> dateUtils.getAge(dateUtils.getDate(person.getBirthdate())) > 18).count())
+                .children((int) people.stream().filter(person -> dateUtils.getAge(dateUtils.getDate(person.getBirthdate())) <= 18).count())
                 .build();
     }
 

@@ -1,8 +1,7 @@
 package com.safetynet.alerts.controller;
 
-import com.safetynet.alerts.dto.MedicalRecordDto;
-import com.safetynet.alerts.dto.SimpleMedicalRecordDto;
-import com.safetynet.alerts.dto.SimplePersonDto;
+import com.safetynet.alerts.object.request.MedicalRecordRequest;
+import com.safetynet.alerts.object.response.MedicalRecordResponse;
 import com.safetynet.alerts.service.MedicalRecordService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,22 +21,22 @@ public class MedicalRecordController {
     }
 
     @GetMapping()
-    public ResponseEntity<SimpleMedicalRecordDto> getMedicalRecord(@Valid @RequestBody SimplePersonDto personDto) {
-        return new ResponseEntity<>(medicalRecordService.getMedicalRecord(personDto.getFirstName(), personDto.getLastName()), HttpStatus.OK);
+    public ResponseEntity<MedicalRecordResponse> getMedicalRecord(@Valid @RequestParam String firstName, String lastName) {
+        return new ResponseEntity<>(medicalRecordService.getMedicalRecord(firstName, lastName), HttpStatus.OK);
     }
 
     @PostMapping()
-    public ResponseEntity<MedicalRecordDto> createMedicalRecord(@Valid @RequestBody MedicalRecordDto medicalRecord) {
-        return new ResponseEntity<>(medicalRecordService.createMedicalRecord(medicalRecord), HttpStatus.CREATED);
+    public ResponseEntity<MedicalRecordResponse> createMedicalRecord(@Valid @RequestBody MedicalRecordRequest medicalRecordRequest) {
+        return new ResponseEntity<>(medicalRecordService.createMedicalRecord(medicalRecordRequest), HttpStatus.CREATED);
     }
 
     @PutMapping()
-    public ResponseEntity<MedicalRecordDto> updateMedicalRecord(@Valid @RequestBody MedicalRecordDto medicalRecord) {
-        return new ResponseEntity<>(medicalRecordService.updateMedicalRecord(medicalRecord), HttpStatus.OK);
+    public ResponseEntity<MedicalRecordResponse> updateMedicalRecord(@Valid @RequestBody MedicalRecordRequest medicalRecordRequest) {
+        return new ResponseEntity<>(medicalRecordService.updateMedicalRecord(medicalRecordRequest), HttpStatus.OK);
     }
 
     @DeleteMapping
-    public void deleteMedicalRecord(@RequestBody SimplePersonDto personDto) {
-        medicalRecordService.deleteMedicalRecord(personDto.getFirstName(), personDto.getLastName());
+    public void deleteMedicalRecord(@RequestParam String firstName, @RequestParam String lastName) {
+        medicalRecordService.deleteMedicalRecord(firstName, lastName);
     }
 }

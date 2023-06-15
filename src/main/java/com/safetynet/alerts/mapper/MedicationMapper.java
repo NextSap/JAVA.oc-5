@@ -1,7 +1,8 @@
 package com.safetynet.alerts.mapper;
 
-import com.safetynet.alerts.dto.MedicationDto;
-import com.safetynet.alerts.entity.MedicationEntity;
+import com.safetynet.alerts.object.entity.MedicationEntity;
+import com.safetynet.alerts.object.request.MedicationRequest;
+import com.safetynet.alerts.object.response.MedicationResponse;
 
 public class MedicationMapper {
 
@@ -10,17 +11,17 @@ public class MedicationMapper {
     private MedicationMapper() {
     }
 
-    public MedicationDto toMedicationDto(MedicationEntity medicationEntity) {
-        return MedicationDto.builder()
+    public MedicationResponse toMedicationResponse(MedicationEntity medicationEntity) {
+        return MedicationResponse.builder()
                 .name(medicationEntity.getName())
                 .mlDosage(medicationEntity.getMlDosage())
                 .build();
     }
 
-    public MedicationEntity toMedicationEntity(MedicationDto medicationDto) {
+    public MedicationEntity toMedicationEntity(MedicationRequest medicationRequest) {
         return MedicationEntity.builder()
-                .name(medicationDto.getName())
-                .mlDosage(medicationDto.getMlDosage())
+                .name(medicationRequest.getName())
+                .mlDosage(medicationRequest.getMlDosage())
                 .build();
     }
 

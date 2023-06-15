@@ -1,8 +1,9 @@
 package com.safetynet.alerts.controller;
 
-import com.safetynet.alerts.dto.PersonDto;
-import com.safetynet.alerts.dto.SimplePersonDto;
+import com.safetynet.alerts.object.request.PersonRequest;
+import com.safetynet.alerts.object.response.PersonResponse;
 import com.safetynet.alerts.service.PersonService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,18 +20,23 @@ public class PersonController {
         this.personService = personService;
     }
 
+    @GetMapping// TODO: à supprimer
+    public ResponseEntity<PersonResponse> getPerson(@RequestParam String firstName, String lastName) {
+        return new ResponseEntity<>(personService.getPersonResponseByName(firstName, lastName), HttpStatus.OK);
+    }
+
     @PostMapping()
-    public ResponseEntity<PersonDto> createPerson(@RequestBody PersonDto personDto) {
-        return new ResponseEntity<>(personService.createPerson(personDto), HttpStatus.CREATED);
+    public ResponseEntity<PersonResponse> createPerson(@Valid @RequestBody PersonRequest personRequest) {
+        return new ResponseEntity<>(personService.createPerson(personRequest), HttpStatus.CREATED);
     }
 
     @PutMapping()
-    public ResponseEntity<PersonDto> updatePerson(@RequestBody PersonDto personDto) {
+    public ResponseEntity<PersonResponse> updatePerson(@Valid @RequestBody PersonRequest personDto) {
         return new ResponseEntity<>(personService.updatePerson(personDto), HttpStatus.OK);
     }
 
     @DeleteMapping
-    public void deletePerson(@RequestBody SimplePersonDto simplePersonDto) {
-        personService.deletePerson(simplePersonDto);
+    public void deletePerson(@RequestParam String firstName, String lastName) {
+        personService.deletePerson(firstName, lastName);
     }
 }

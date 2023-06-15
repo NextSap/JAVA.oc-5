@@ -76,7 +76,7 @@ public class DateUtils {
      * @param birthdate the birthdate of the person
      * @return the age of the person
      */
-    public static int getAge(Date birthdate) {
+    public int getAge(Date birthdate) {
         Calendar calendar = new Calendar.Builder().setInstant(birthdate.getTime()).build();
         return Calendar.getInstance().get(Calendar.YEAR) - calendar.get(Calendar.YEAR);
     }

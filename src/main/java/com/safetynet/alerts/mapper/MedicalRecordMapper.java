@@ -1,8 +1,8 @@
 package com.safetynet.alerts.mapper;
 
-import com.safetynet.alerts.dto.MedicalRecordDto;
-import com.safetynet.alerts.dto.SimpleMedicalRecordDto;
-import com.safetynet.alerts.entity.MedicalRecordEntity;
+import com.safetynet.alerts.object.entity.MedicalRecordEntity;
+import com.safetynet.alerts.object.request.MedicalRecordRequest;
+import com.safetynet.alerts.object.response.MedicalRecordResponse;
 
 import java.util.stream.Collectors;
 
@@ -14,31 +14,40 @@ public class MedicalRecordMapper {
     private MedicalRecordMapper() {
     }
 
-    public SimpleMedicalRecordDto toSimpleMedicalRecordDto(MedicalRecordEntity medicalRecordEntity) {
-        return SimpleMedicalRecordDto.builder()
+    public MedicalRecordResponse toMedicalRecordResponse(MedicalRecordEntity medicalRecordEntity) {
+        return MedicalRecordResponse.builder()
                 .medications(medicalRecordEntity.getMedications().stream()
-                        .map(medicationMapper::toMedicationDto)
+                        .map(medicationMapper::toMedicationResponse)
                         .collect(Collectors.toList()))
                 .allergies(medicalRecordEntity.getAllergies())
                 .build();
     }
 
-    public MedicalRecordEntity toMedicalRecordEntity(SimpleMedicalRecordDto simpleMedicalRecordDto) {
+    public MedicalRecordEntity toMedicalRecordEntity(MedicalRecordRequest medicalRecordRequest) {
         return MedicalRecordEntity.builder()
-                .medications(simpleMedicalRecordDto.getMedications().stream()
+                .medications(medicalRecordRequest.getMedications().stream()
                         .map(medicationMapper::toMedicationEntity)
                         .collect(Collectors.toList()))
-                .allergies(simpleMedicalRecordDto.getAllergies())
+                .allergies(medicalRecordRequest.getAllergies())
                 .build();
     }
 
-    public MedicalRecordEntity toMedicalRecordEntity(MedicalRecordDto medicalRecordDto, long personId) {
+    public MedicalRecordEntity toMedicalRecordEntity(MedicalRecordRequest medicalRecordRequest, long personId) {
         return MedicalRecordEntity.builder()
                 .personId(personId)
-                .medications(medicalRecordDto.getMedications().stream()
+                .medications(medicalRecordRequest.getMedications().stream()
                         .map(medicationMapper::toMedicationEntity)
                         .collect(Collectors.toList()))
-                .allergies(medicalRecordDto.getAllergies())
+                .allergies(medicalRecordRequest.getAllergies())
+                .build();
+    }
+
+    public MedicalRecordResponse toSimpleMedicalRecordResponse(MedicalRecordEntity medicalRecordEntity) {
+        return MedicalRecordResponse.builder()
+                .medications(medicalRecordEntity.getMedications().stream()
+                        .map(medicationMapper::toMedicationResponse)
+                        .collect(Collectors.toList()))
+                .allergies(medicalRecordEntity.getAllergies())
                 .build();
     }
 

@@ -1,6 +1,6 @@
 package com.safetynet.alerts.controller;
 
-import com.safetynet.alerts.dto.*;
+import com.safetynet.alerts.object.response.*;
 import com.safetynet.alerts.service.FireStationService;
 import com.safetynet.alerts.service.PersonService;
 import jakarta.validation.Valid;
@@ -26,12 +26,12 @@ public class ConfusionController {
     }
 
     @GetMapping("/firestation")
-    public ResponseEntity<PeopleCoveredByFireStationDto> getPeopleCoveredByFireStation(@Valid  @RequestParam("stationNumber") int stationNumber) {
+    public ResponseEntity<PeopleCoveredByFireStationResponse> getPeopleCoveredByFireStation(@Valid  @RequestParam("stationNumber") int stationNumber) {
         return new ResponseEntity<>(fireStationService.getPeopleCoveredByFireStation(stationNumber), HttpStatus.OK);
     }
 
     @GetMapping("/childAlert")
-    public ResponseEntity<ChildAlertDto> getChildrenFromAddress(@Valid @RequestParam("address") String address) {
+    public ResponseEntity<ChildAlertResponse> getChildrenFromAddress(@Valid @RequestParam("address") String address) {
         return new ResponseEntity<>(personService.getChildAlert(address), HttpStatus.OK);
     }
 
@@ -41,17 +41,17 @@ public class ConfusionController {
     }
 
     @GetMapping("/fire")
-    public ResponseEntity<FireDto> getPeopleAndFireStationFromAddress(@Valid @RequestParam("address") String address) {
+    public ResponseEntity<FireResponse> getPeopleAndFireStationFromAddress(@Valid @RequestParam("address") String address) {
         return new ResponseEntity<>(fireStationService.getPeopleAndFireStationFromAddress(address), HttpStatus.OK);
     }
 
     @GetMapping("/flood/stations")
-    public ResponseEntity<List<HomeDto>> getPeopleCoveredByFireStations(@Valid @RequestParam("stations") Integer[] stations) {
+    public ResponseEntity<List<HomeResponse>> getPeopleCoveredByFireStations(@Valid @RequestParam("stations") Integer[] stations) {
         return new ResponseEntity<>(fireStationService.getPeopleCoveredByFireStations(stations), HttpStatus.OK);
     }
 
     @GetMapping("/personInfo")
-    public ResponseEntity<PersonWithMedicalsAndEmailDto> getPersonInfo(@Valid @RequestParam("firstName") String firstName, @RequestParam("lastName") String lastName) {
+    public ResponseEntity<PersonResponse> getPersonInfo(@Valid @RequestParam("firstName") String firstName, @RequestParam("lastName") String lastName) {
         return new ResponseEntity<>(personService.getPersonInfo(firstName, lastName), HttpStatus.OK);
     }
 

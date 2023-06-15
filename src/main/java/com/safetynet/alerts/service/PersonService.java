@@ -1,11 +1,14 @@
 package com.safetynet.alerts.service;
 
-import com.safetynet.alerts.dto.*;
-import com.safetynet.alerts.entity.FireStationEntity;
-import com.safetynet.alerts.entity.MedicalRecordEntity;
-import com.safetynet.alerts.entity.PersonEntity;
+import com.safetynet.alerts.object.entity.FireStationEntity;
+import com.safetynet.alerts.object.entity.MedicalRecordEntity;
+import com.safetynet.alerts.object.entity.PersonEntity;
+import com.safetynet.alerts.exception.PersonAlreadyExistException;
 import com.safetynet.alerts.exception.PersonNotFoundException;
 import com.safetynet.alerts.mapper.PersonMapper;
+import com.safetynet.alerts.object.request.PersonRequest;
+import com.safetynet.alerts.object.response.ChildAlertResponse;
+import com.safetynet.alerts.object.response.PersonResponse;
 import com.safetynet.alerts.repository.PersonRepository;
 import com.safetynet.alerts.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +16,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PersonService {
@@ -25,6 +29,12 @@ public class PersonService {
     public PersonService(PersonRepository personRepository, @Lazy MedicalRecordService medicalRecordService) {
         this.personRepository = personRepository;
         this.medicalRecordService = medicalRecordService;
+    }
+
+    public Optional<PersonEntity> getOptionalPersonEntityByName(String firstName, String lastName) {
+        return personRepository.findAll().stream()
+                .filter(person -> person.getFirstName().equals(firstName) && person.getLastName().equals(lastName))
+                .findFirst();
     }
 
     public PersonEntity getPersonEntityByName(String firstName, String lastName) {
@@ -41,43 +51,47 @@ public class PersonService {
         return personRepository.findAll();
     }
 
-    public PersonDto getPersonEntity(SimplePersonDto simplePersonDto) {
+    public PersonResponse getPersonResponseByName(String firstName, String lastName) {
         PersonEntity personEntity = personRepository.findAll().stream()
-                .filter(person -> person.getFirstName().equals(simplePersonDto.getFirstName()) && person.getLastName().equals(simplePersonDto.getLastName()))
-                .findFirst().orElseThrow(() -> new PersonNotFoundException("Person with name " + simplePersonDto.getFirstName() + " " + simplePersonDto.getLastName() + " not found"));
-        return personMapper.toPersonDto(personEntity);
+                .filter(person -> person.getFirstName().equals(firstName) && person.getLastName().equals(lastName))
+                .findFirst().orElseThrow(() -> new PersonNotFoundException("Person with name " + firstName + " " + lastName + " not found"));
+        return personMapper.toPersonResponse(personEntity);
     }
 
-    public PersonDto createPerson(PersonDto personDto) {
-        personRepository.save(personMapper.toPersonEntity(personDto));
-        return personDto;
+    public PersonResponse createPerson(PersonRequest personDto) {
+        checkPersonExists(personDto.getFirstName(), personDto.getLastName());
+
+        PersonEntity personEntity = personRepository.save(personMapper.toPersonEntity(personDto));
+        return personMapper.toPersonResponse(personEntity);
     }
 
-    public PersonDto updatePerson(PersonDto personDto) {
-        PersonEntity personEntity = getPersonEntityByName(personDto.getFirstName(), personDto.getLastName());
-        PersonEntity updatedPersonDto = personRepository.save(personMapper.toPersonEntity(personDto, personEntity.getId()));
+    public PersonResponse updatePerson(PersonRequest personRequest) {
+        PersonEntity personEntity = getPersonEntityByName(personRequest.getFirstName(), personRequest.getLastName());
+        PersonEntity updatedPersonDto = personRepository.save(personMapper.toPersonEntity(personRequest, personEntity.getId()));
 
-        return personMapper.toPersonDto(updatedPersonDto);
+        return personMapper.toPersonResponse(updatedPersonDto);
     }
 
-    public void deletePerson(SimplePersonDto personDto) {
-        personRepository.delete(getPersonEntityByName(personDto.getFirstName(), personDto.getLastName()));
+    public void deletePerson(String firstName, String lastName) {
+        PersonEntity personEntity = getPersonEntityByName(firstName, lastName);
+        personRepository.delete(personEntity);
     }
 
-    public ChildAlertDto getChildAlert(String address) {
+    public ChildAlertResponse getChildAlert(String address) {
         List<PersonEntity> children = getPeople().stream().filter(person -> !DateUtils.getInstance().isMajor(person.getBirthdate()) && person.getAddress().getStreet().equals(address)).toList();
         List<PersonEntity> familyMembers = getPeople().stream().filter(person -> children.stream().anyMatch(child -> child.getLastName().equals(person.getLastName()) && !child.getFirstName().equals(person.getFirstName()))).toList();
 
-        return ChildAlertDto.builder()
-                .children(personMapper.toChildDtoList(children))
-                .familyMembers(personMapper.toSimplePersonDtoList(familyMembers))
+        return ChildAlertResponse.builder()
+                .children(personMapper.toPersonResponseList(children))
+                .familyMembers(personMapper.toPersonResponseList(familyMembers))
                 .build();
     }
 
-    public PersonWithMedicalsAndEmailDto getPersonInfo(String firstName, String lastName) {
+    public PersonResponse getPersonInfo(String firstName, String lastName) {
         PersonEntity personEntity = getPersonEntityByName(firstName, lastName);
         MedicalRecordEntity medicalRecordEntity = medicalRecordService.getMedicalRecordEntityByName(firstName, lastName);
-        return personMapper.toPersonWithMedicalsAndEmailDto(personEntity, medicalRecordEntity);
+
+        return personMapper.toPersonWithMedicalsAndEmailResponse(personEntity, medicalRecordEntity);
     }
 
     public List<String> getCommunityEmail(String city) {
@@ -91,5 +105,11 @@ public class PersonService {
 
     public List<PersonEntity> getPeopleFromFireStation(FireStationEntity fireStationEntity) {
         return getPeople().stream().filter(person -> fireStationEntity.getAddresses().contains(person.getAddress().getStreet())).toList();
+    }
+
+    private void checkPersonExists(String firstName, String lastName) {
+        if (getOptionalPersonEntityByName(firstName, lastName).isPresent()) {
+            throw new PersonAlreadyExistException("Person with name " + firstName + " " + lastName + " already exists");
+        }
     }
 }
