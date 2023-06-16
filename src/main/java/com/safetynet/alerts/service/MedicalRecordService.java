@@ -51,7 +51,7 @@ public class MedicalRecordService {
     }
 
     public MedicalRecordResponse updateMedicalRecord(MedicalRecordRequest medicalRecordRequest) {
-        checkMedicalRecordExist(medicalRecordRequest.getFirstName(), medicalRecordRequest.getLastName());
+        checkMedicalRecordExists(medicalRecordRequest.getFirstName(), medicalRecordRequest.getLastName());
 
         long personId = personService.getPersonEntityByName(medicalRecordRequest.getFirstName(), medicalRecordRequest.getLastName()).getId();
         MedicalRecordEntity medicalRecordEntity = medicalRecordRepository.save(medicalRecordMapper.toMedicalRecordEntity(medicalRecordRequest, personId));
@@ -62,8 +62,9 @@ public class MedicalRecordService {
         medicalRecordRepository.delete(getMedicalRecordEntityByName(firstName, lastName));
     }
 
-    private void checkMedicalRecordExist(String firstName, String lastName) {
+    public boolean checkMedicalRecordExists(String firstName, String lastName) {
         if (getOptionalMedicalRecordEntityByName(firstName, lastName).isPresent())
             throw new MedicalException.MedicalAlreadyExistsException("Medical record of `" + firstName + " " + lastName + "` already exist");
+        return false;
     }
 }

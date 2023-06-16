@@ -34,6 +34,8 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 public class PersonServiceTest {
 
+    private final String firstName = "Foo";
+    private final String lastName = "Bar";
     @Mock
     private static PersonRepository personRepository;
     @Mock
@@ -49,8 +51,8 @@ public class PersonServiceTest {
     public void setUpEach() {
         personEntity = PersonEntity.builder()
                 .id(1)
-                .firstName("Foo")
-                .lastName("Bar")
+                .firstName(firstName)
+                .lastName(lastName)
                 .address(AddressEntity.builder().street("street").city("city").zip("zip").build())
                 .birthdate(DateUtils.getInstance().getDate("01/01/2000").getTime())
                 .email("email")
@@ -70,20 +72,13 @@ public class PersonServiceTest {
 
     @Test
     public void testGetOptionalPersonEntityByName() {
-        String firstName = "Foo";
-        String lastName = "Bar";
-
         Optional<PersonEntity> optionalPersonEntity = personService.getOptionalPersonEntityByName(firstName, lastName);
 
         assertEquals(Optional.of(personEntity), optionalPersonEntity);
     }
 
     @Test
-    public void testGetPersonEntityByName() {
-        String firstName = "Foo";
-        String lastName = "Bar";
-
-        PersonEntity personEntity = personService.getPersonEntityByName(firstName, lastName);
+    public void testGetPersonEntityByName() {PersonEntity personEntity = personService.getPersonEntityByName(firstName, lastName);
 
         assertEquals(personEntity, personEntity);
     }
@@ -100,11 +95,7 @@ public class PersonServiceTest {
     }
 
     @Test
-    public void testGetPersonResponseByName() {
-        String firstName = "Foo";
-        String lastName = "Bar";
-
-        PersonResponse personResponse = personService.getPersonResponseByName(firstName, lastName);
+    public void testGetPersonResponseByName() {PersonResponse personResponse = personService.getPersonResponseByName(firstName, lastName);
 
         assertEquals(personMapper.toPersonResponse(personEntity), personResponse);
     }
@@ -134,8 +125,8 @@ public class PersonServiceTest {
     @Test
     public void testUpdatePerson() {
         PersonRequest personRequest = PersonRequest.builder()
-                .firstName("Foo")
-                .lastName("Bar")
+                .firstName(firstName)
+                .lastName(lastName)
                 .address(AddressRequest.builder().street("street").city("city").zip("zip").build())
                 .birthdate("01/01/2000")
                 .email("email")
@@ -151,9 +142,6 @@ public class PersonServiceTest {
 
     @Test
     public void testDeletePerson() {
-        String firstName = "Foo";
-        String lastName = "Bar";
-
         doNothing().when(personRepository).delete(any(PersonEntity.class));
 
         personService.deletePerson(firstName, lastName);
@@ -179,15 +167,10 @@ public class PersonServiceTest {
 
     @Test
     public void testGetPersonInfo() {
-        String firstName = "Foo";
-        String lastName = "Bar";
-
-        PersonEntity person = personEntity;
-
         MedicalRecordEntity medicalRecordEntity = MedicalRecordEntity.builder().personId(1).medications(new ArrayList<>()).allergies(new ArrayList<>()).build();
 
         when(medicalRecordRepository.findAll()).thenReturn(List.of(medicalRecordEntity));
-        when(personRepository.findById(1L)).thenReturn(Optional.of(person));
+        when(personRepository.findById(1L)).thenReturn(Optional.of(personEntity));
         when(medicalRecordService.getMedicalRecordEntityByName("Foo", "Bar")).thenReturn(medicalRecordEntity);
 
 
@@ -195,7 +178,7 @@ public class PersonServiceTest {
 
         verify(personRepository, times(1)).findAll();
 
-        assertEquals(personMapper.toPersonWithMedicalsAndEmailResponse(person, medicalRecordEntity), personResponse);
+        assertEquals(personMapper.toPersonWithMedicalsAndEmailResponse(personEntity, medicalRecordEntity), personResponse);
     }
 
     @Test
@@ -239,9 +222,6 @@ public class PersonServiceTest {
 
     @Test
     public void testCheckPersonExists() {
-        String firstName = "Foo";
-        String lastName = "Bar";
-
         when(personRepository.findAll()).thenReturn(List.of(personEntity));
 
         assertThrows(PersonException.PersonAlreadyExistsException.class, () -> personService.checkPersonExists(firstName, lastName));

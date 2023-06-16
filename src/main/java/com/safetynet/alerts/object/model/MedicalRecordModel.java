@@ -1,12 +1,10 @@
 package com.safetynet.alerts.object.model;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Builder
 public class MedicalRecordModel {
     private String firstName;
     private String lastName;
