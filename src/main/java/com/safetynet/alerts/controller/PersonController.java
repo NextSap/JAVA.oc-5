@@ -31,8 +31,8 @@ public class PersonController {
     }
 
     @PutMapping()
-    public ResponseEntity<PersonResponse> updatePerson(@Valid @RequestBody PersonRequest personDto) {
-        return new ResponseEntity<>(personService.updatePerson(personDto), HttpStatus.OK);
+    public ResponseEntity<PersonResponse> updatePerson(@Valid @RequestBody PersonRequest personRequest) {
+        return new ResponseEntity<>(personService.updatePerson(personRequest), HttpStatus.OK);
     }
 
     @DeleteMapping

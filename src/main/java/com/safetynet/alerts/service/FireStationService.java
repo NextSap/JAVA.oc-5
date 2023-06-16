@@ -106,9 +106,9 @@ public class FireStationService {
 
                 if (personEntity.isEmpty()) throw new PersonException.PersonNotFoundException("No person found for this address");
 
-                HomeResponse homeDto = HomeResponse.builder().address(addressMapper.toAddressResponse(personEntity.get().getAddress()))
+                HomeResponse homeResponse = HomeResponse.builder().address(addressMapper.toAddressResponse(personEntity.get().getAddress()))
                         .people(personMapper.toPersonWithMedicalsResponseList(people)).build();
-                homes.add(homeDto);
+                homes.add(homeResponse);
             }
         }
         return homes;

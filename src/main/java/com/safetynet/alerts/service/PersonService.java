@@ -46,7 +46,7 @@ public class PersonService {
         return personRepository.findById(id).orElseThrow(() -> new PersonException.PersonNotFoundException("Person with id `" + id + "` not found"));
     }
 
-    private List<PersonEntity> getPeople() {
+    public List<PersonEntity> getPeople() {
         return personRepository.findAll();
     }
 
@@ -57,18 +57,18 @@ public class PersonService {
         return personMapper.toPersonResponse(personEntity);
     }
 
-    public PersonResponse createPerson(PersonRequest personDto) {
-        checkPersonExists(personDto.getFirstName(), personDto.getLastName());
+    public PersonResponse createPerson(PersonRequest personRequest) {
+        checkPersonExists(personRequest.getFirstName(), personRequest.getLastName());
 
-        PersonEntity personEntity = personRepository.save(personMapper.toPersonEntity(personDto));
+        PersonEntity personEntity = personRepository.save(personMapper.toPersonEntity(personRequest));
         return personMapper.toPersonResponse(personEntity);
     }
 
     public PersonResponse updatePerson(PersonRequest personRequest) {
         PersonEntity personEntity = getPersonEntityByName(personRequest.getFirstName(), personRequest.getLastName());
-        PersonEntity updatedPersonDto = personRepository.save(personMapper.toPersonEntity(personRequest, personEntity.getId()));
+        PersonEntity updatedPersonEntity = personRepository.save(personMapper.toPersonEntity(personRequest, personEntity.getId()));
 
-        return personMapper.toPersonResponse(updatedPersonDto);
+        return personMapper.toPersonResponse(updatedPersonEntity);
     }
 
     public void deletePerson(String firstName, String lastName) {
@@ -106,9 +106,10 @@ public class PersonService {
         return getPeople().stream().filter(person -> fireStationEntity.getAddresses().contains(person.getAddress().getStreet())).toList();
     }
 
-    private void checkPersonExists(String firstName, String lastName) {
+    public boolean checkPersonExists(String firstName, String lastName) {
         if (getOptionalPersonEntityByName(firstName, lastName).isPresent()) {
             throw new PersonException.PersonAlreadyExistsException("Person with name `" + firstName + " " + lastName + "` already exists");
         }
+        return false;
     }
 }
