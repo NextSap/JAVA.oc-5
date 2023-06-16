@@ -124,18 +124,9 @@ public class FireStationService {
         return peopleAndMedicalRecord;
     }
 
-    public Map<PersonEntity, MedicalRecordEntity> getPeopleAndMedicalRecordFromFireStation(FireStationEntity fireStationEntity) {
-        List<PersonEntity> people = personService.getPeopleFromFireStation(fireStationEntity);
-        Map<PersonEntity, MedicalRecordEntity> peopleAndMedicalRecord = new HashMap<>();
-
-        for (PersonEntity person : people)
-            peopleAndMedicalRecord.put(person, medicalRecordService.getMedicalRecordEntityByName(person.getFirstName(), person.getLastName()));
-
-        return peopleAndMedicalRecord;
-    }
-
-    private void checkFireStationExists(int station) {
+    public boolean checkFireStationExists(int station) {
         if (getOptionalFireStationEntityByStation(station).isPresent())
             throw new FireStationException.FireStationAlreadyExistsException("FireStation with station `" + station + "` already exist");
+        return false;
     }
 }
