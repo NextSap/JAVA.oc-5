@@ -42,7 +42,8 @@ suivante : http://localhost:8080/docs
 
 ### Postman
 
-Vous pouvez également importer la collection Postman qui correspond à cette API 
+Vous pouvez également importer la collection Postman qui correspond à cette API (cf. <a target="_blank" href="https://learning.postman.com/docs/getting-started/importing-and-exporting-data/#importing-data-into-postman">Postman - Importing data into Postman</a>)
 ```
 cd .postman/
 ```
+
