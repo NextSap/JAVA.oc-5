@@ -1,6 +1,5 @@
 package com.safetynet.alerts.unit.service;
 
-import com.safetynet.alerts.exception.MedicalException;
 import com.safetynet.alerts.mapper.MedicalRecordMapper;
 import com.safetynet.alerts.object.entity.AddressEntity;
 import com.safetynet.alerts.object.entity.MedicalRecordEntity;
@@ -124,7 +123,7 @@ public class MedicalRecordServiceTest {
 
     @Test
     public void testMedicalRecordExists() {
-        assertThrows(MedicalException.MedicalAlreadyExistsException.class, () -> medicalRecordService.checkMedicalRecordExists(firstName, lastName));
+        assertTrue(medicalRecordService.checkMedicalRecordExists(firstName, lastName));
         assertFalse(medicalRecordService.checkMedicalRecordExists(firstName, "Baz"));
     }
 }

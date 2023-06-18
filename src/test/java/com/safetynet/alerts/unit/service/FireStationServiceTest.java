@@ -1,7 +1,5 @@
 package com.safetynet.alerts.unit.service;
 
-import com.safetynet.alerts.exception.FireStationException;
-import com.safetynet.alerts.mapper.AddressMapper;
 import com.safetynet.alerts.mapper.FireStationMapper;
 import com.safetynet.alerts.mapper.PersonMapper;
 import com.safetynet.alerts.object.entity.AddressEntity;
@@ -45,7 +43,6 @@ public class FireStationServiceTest {
 
     private final PersonMapper personMapper = PersonMapper.getInstance();
     private final FireStationMapper fireStationMapper = FireStationMapper.getInstance();
-    private final AddressMapper addressMapper = AddressMapper.getInstance();
 
     private FireStationEntity fireStationEntity;
     private PersonEntity personEntity;
@@ -199,7 +196,7 @@ public class FireStationServiceTest {
     public void testCheckFireStationExists() {
         int station = 1;
 
-        assertThrows(FireStationException.FireStationAlreadyExistsException.class, () -> fireStationService.checkFireStationExists(station));
+        assertTrue(fireStationService.checkFireStationExists(station));
         assertFalse(fireStationService.checkFireStationExists(2));
     }
 }

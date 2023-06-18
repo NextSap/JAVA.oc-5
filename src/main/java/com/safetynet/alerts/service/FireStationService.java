@@ -56,13 +56,17 @@ public class FireStationService {
     }
 
     public FireStationResponse createFireStation(FireStationRequest fireStationRequest) {
-        checkFireStationExists(fireStationRequest.getStation());
+        if (checkFireStationExists(fireStationRequest.getStation()))
+            throw new FireStationException.FireStationAlreadyExistsException("FireStation with station `" + fireStationRequest.getStation() + "` already exists");
 
         FireStationEntity fireStationEntity = fireStationRepository.save(fireStationMapper.toFireStationEntity(fireStationRequest));
         return fireStationMapper.toFireStationResponse(fireStationEntity);
     }
 
     public FireStationResponse updateFireStation(FireStationRequest fireStationRequest) {
+        if (!checkFireStationExists(fireStationRequest.getStation()))
+            throw new FireStationException.FireStationNotFoundException("FireStation with station `" + fireStationRequest.getStation() + "` not found");
+
         FireStationEntity fireStationEntity = getFireStationEntityByStation(fireStationRequest.getStation());
         FireStationEntity updatedFireStationEntity = fireStationRepository.save(fireStationMapper.toFireStationEntity(fireStationRequest, fireStationEntity.getId()));
 
@@ -78,7 +82,7 @@ public class FireStationService {
         FireStationEntity fireStationEntity = getFireStationEntityByStreet(street);
         Map<PersonEntity, MedicalRecordEntity> peopleWithMedicalEntity = getPeopleAndMedicalRecordFromStreet(street);
 
-        return fireStationMapper.toFireResponse(fireStationEntity.getStation(), personMapper.toPersonWithMedicalsResponseList(peopleWithMedicalEntity));
+        return fireStationMapper.toFireResponse(fireStationEntity.getStation(), personMapper.toPersonWithSimpleMedicalsResponseList(peopleWithMedicalEntity));
     }
 
     public List<String> getPhoneFromPeopleCoveredByFireStation(int fireStation) {
@@ -104,7 +108,8 @@ public class FireStationService {
                 Map<PersonEntity, MedicalRecordEntity> people = getPeopleAndMedicalRecordFromStreet(street);
                 Optional<PersonEntity> personEntity = people.keySet().stream().findFirst();
 
-                if (personEntity.isEmpty()) throw new PersonException.PersonNotFoundException("No person found for this address");
+                if (personEntity.isEmpty())
+                    throw new PersonException.PersonNotFoundException("No person found for this address");
 
                 HomeResponse homeResponse = HomeResponse.builder().address(addressMapper.toAddressResponse(personEntity.get().getAddress()))
                         .people(personMapper.toPersonWithMedicalsResponseList(people)).build();
@@ -125,8 +130,6 @@ public class FireStationService {
     }
 
     public boolean checkFireStationExists(int station) {
-        if (getOptionalFireStationEntityByStation(station).isPresent())
-            throw new FireStationException.FireStationAlreadyExistsException("FireStation with station `" + station + "` already exist");
-        return false;
+        return getOptionalFireStationEntityByStation(station).isPresent();
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,13 +59,19 @@ public class PersonService {
     }
 
     public PersonResponse createPerson(PersonRequest personRequest) {
-        checkPersonExists(personRequest.getFirstName(), personRequest.getLastName());
+        if (checkPersonExists(personRequest.getFirstName(), personRequest.getLastName())) {
+            throw new PersonException.PersonAlreadyExistsException("Person with name `" + personRequest.getFirstName() + " " + personRequest.getLastName() + "` already exists");
+        }
 
         PersonEntity personEntity = personRepository.save(personMapper.toPersonEntity(personRequest));
         return personMapper.toPersonResponse(personEntity);
     }
 
     public PersonResponse updatePerson(PersonRequest personRequest) {
+        if (!checkPersonExists(personRequest.getFirstName(), personRequest.getLastName())) {
+            throw new PersonException.PersonNotFoundException("Person with name `" + personRequest.getFirstName() + " " + personRequest.getLastName() + "` not found");
+        }
+
         PersonEntity personEntity = getPersonEntityByName(personRequest.getFirstName(), personRequest.getLastName());
         PersonEntity updatedPersonEntity = personRepository.save(personMapper.toPersonEntity(personRequest, personEntity.getId()));
 
@@ -78,7 +85,7 @@ public class PersonService {
 
     public ChildAlertResponse getChildAlert(String address) {
         List<PersonEntity> children = getPeople().stream().filter(person -> !DateUtils.getInstance().isMajor(person.getBirthdate()) && person.getAddress().getStreet().equals(address)).toList();
-        List<PersonEntity> familyMembers = getPeople().stream().filter(person -> children.stream().anyMatch(child -> child.getLastName().equals(person.getLastName()) && !child.getFirstName().equals(person.getFirstName()))).toList();
+        List<PersonEntity> familyMembers = getPeople().stream().filter(person -> person.getAddress().getStreet().equals(address) && DateUtils.getInstance().isMajor(person.getBirthdate())).toList();
 
         return ChildAlertResponse.builder()
                 .children(personMapper.toPersonResponseList(children))
@@ -95,7 +102,14 @@ public class PersonService {
 
     public List<String> getCommunityEmail(String city) {
         List<PersonEntity> people = getPeople().stream().filter(person -> person.getAddress().getCity().equals(city)).toList();
-        return people.stream().map(PersonEntity::getEmail).toList();
+        List<String> emails = new ArrayList<>();
+
+        for (PersonEntity person : people) {
+            String email = person.getEmail();
+            if (!emails.contains(email)) emails.add(person.getEmail());
+        }
+
+        return emails;
     }
 
     public List<PersonEntity> getPeopleFromStreet(String street) {
@@ -107,9 +121,6 @@ public class PersonService {
     }
 
     public boolean checkPersonExists(String firstName, String lastName) {
-        if (getOptionalPersonEntityByName(firstName, lastName).isPresent()) {
-            throw new PersonException.PersonAlreadyExistsException("Person with name `" + firstName + " " + lastName + "` already exists");
-        }
-        return false;
+        return getOptionalPersonEntityByName(firstName, lastName).isPresent();
     }
 }

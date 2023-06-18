@@ -1,6 +1,5 @@
 package com.safetynet.alerts.unit.service;
 
-import com.safetynet.alerts.exception.PersonException;
 import com.safetynet.alerts.mapper.PersonMapper;
 import com.safetynet.alerts.object.entity.AddressEntity;
 import com.safetynet.alerts.object.entity.FireStationEntity;
@@ -222,9 +221,7 @@ public class PersonServiceTest {
 
     @Test
     public void testCheckPersonExists() {
-        when(personRepository.findAll()).thenReturn(List.of(personEntity));
-
-        assertThrows(PersonException.PersonAlreadyExistsException.class, () -> personService.checkPersonExists(firstName, lastName));
+        assertTrue(personService.checkPersonExists(firstName, lastName));
         assertFalse(personService.checkPersonExists("Foo", "Baz"));
     }
 }

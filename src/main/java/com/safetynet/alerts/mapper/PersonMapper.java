@@ -96,9 +96,24 @@ public class PersonMapper {
                 .build();
     }
 
+    public PersonResponse toPersonWithSimpleMedicalsResponse(PersonEntity personEntity, MedicalRecordEntity medicalRecordEntity) {
+        return PersonResponse.builder()
+                .firstName(personEntity.getFirstName())
+                .lastName(personEntity.getLastName())
+                .address(addressMapper.toAddressResponse(personEntity.getAddress()))
+                .birthdate(dateUtils.getFormattedDate(dateUtils.getDate(personEntity.getBirthdate())))
+                .medicalRecord(medicalRecordMapper.toSimpleMedicalRecordResponse(medicalRecordEntity))
+                .age(dateUtils.getAge(dateUtils.getDate(personEntity.getBirthdate())))
+                .build();
+    }
+
     public List<PersonResponse> toPersonWithMedicalsResponseList(Map<PersonEntity, MedicalRecordEntity> personMedicalRecordEntityMap) {
        return personMedicalRecordEntityMap.entrySet().stream().map(entry -> toPersonWithMedicalsResponse(entry.getKey(), entry.getValue())).collect(Collectors.toList());
     }
+
+    public List<PersonResponse> toPersonWithSimpleMedicalsResponseList(Map<PersonEntity, MedicalRecordEntity> personMedicalRecordEntityMap) {
+        return personMedicalRecordEntityMap.entrySet().stream().map(entry -> toPersonWithSimpleMedicalsResponse(entry.getKey(), entry.getValue())).collect(Collectors.toList());
+     }
 
     public PeopleCoveredByFireStationResponse toPeopleCoveredByFireStationResponse(List<PersonEntity> people) {
         return PeopleCoveredByFireStationResponse.builder()

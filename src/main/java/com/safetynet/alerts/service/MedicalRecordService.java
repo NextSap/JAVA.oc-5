@@ -44,6 +44,9 @@ public class MedicalRecordService {
     }
 
     public MedicalRecordResponse createMedicalRecord(MedicalRecordRequest medicalRecordRequest) {
+        if (checkMedicalRecordExists(medicalRecordRequest.getFirstName(), medicalRecordRequest.getLastName()))
+            throw new MedicalException.MedicalAlreadyExistsException("Medical record of `" + medicalRecordRequest.getFirstName() + " " + medicalRecordRequest.getLastName() + "` already exists");
+
         long personId = personService.getPersonEntityByName(medicalRecordRequest.getFirstName(), medicalRecordRequest.getLastName()).getId();
 
         MedicalRecordEntity medicalRecordEntity = medicalRecordRepository.save(medicalRecordMapper.toMedicalRecordEntity(medicalRecordRequest, personId));
@@ -51,7 +54,8 @@ public class MedicalRecordService {
     }
 
     public MedicalRecordResponse updateMedicalRecord(MedicalRecordRequest medicalRecordRequest) {
-        checkMedicalRecordExists(medicalRecordRequest.getFirstName(), medicalRecordRequest.getLastName());
+        if (!checkMedicalRecordExists(medicalRecordRequest.getFirstName(), medicalRecordRequest.getLastName()))
+            throw new MedicalException.MedicalNotFoundException("Medical record of `" + medicalRecordRequest.getFirstName() + " " + medicalRecordRequest.getLastName() + "` not found");
 
         long personId = personService.getPersonEntityByName(medicalRecordRequest.getFirstName(), medicalRecordRequest.getLastName()).getId();
         MedicalRecordEntity medicalRecordEntity = medicalRecordRepository.save(medicalRecordMapper.toMedicalRecordEntity(medicalRecordRequest, personId));
@@ -63,8 +67,6 @@ public class MedicalRecordService {
     }
 
     public boolean checkMedicalRecordExists(String firstName, String lastName) {
-        if (getOptionalMedicalRecordEntityByName(firstName, lastName).isPresent())
-            throw new MedicalException.MedicalAlreadyExistsException("Medical record of `" + firstName + " " + lastName + "` already exist");
-        return false;
+        return getOptionalMedicalRecordEntityByName(firstName, lastName).isPresent();
     }
 }

@@ -31,7 +31,7 @@ public class FireStationController {
     }
 
     @DeleteMapping
-    public void deleteFireStation(@Valid @RequestBody int station) {
+    public void deleteFireStation(@RequestParam int station) {
         fireStationService.deleteFireStation(station);
     }
 }
