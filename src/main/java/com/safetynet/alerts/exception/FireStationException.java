@@ -1,6 +1,8 @@
 package com.safetynet.alerts.exception;
 
 import com.safetynet.alerts.object.model.ErrorModel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -8,14 +10,20 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class FireStationException {
 
+    private final Logger logger = LogManager.getLogger(FireStationException.class);
+
     @ExceptionHandler(FireStationNotFoundException.class)
     public ResponseEntity<ErrorModel> handleNotFoundError(FireStationNotFoundException exception) {
-        return new ResponseEntity<>(ErrorModel.builder().field("fireStation").cause(exception.getMessage()).build(), org.springframework.http.HttpStatus.NOT_FOUND);
+        ErrorModel errorModel = ErrorModel.builder().field("fireStation").cause(exception.getMessage()).build();
+        logger.error("FireStationNotFoundException: " + errorModel.toString());
+        return new ResponseEntity<>(errorModel, org.springframework.http.HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(FireStationAlreadyExistsException.class)
     public ResponseEntity<ErrorModel> handleAlreadyExistError(FireStationAlreadyExistsException exception) {
-        return new ResponseEntity<>(ErrorModel.builder().field("fireStation").cause(exception.getMessage()).build(), org.springframework.http.HttpStatus.CONFLICT);
+        ErrorModel errorModel = ErrorModel.builder().field("fireStation").cause(exception.getMessage()).build();
+        logger.error("FireStationAlreadyExistsException: " + errorModel.toString());
+        return new ResponseEntity<>(errorModel, org.springframework.http.HttpStatus.CONFLICT);
     }
 
     public static class FireStationNotFoundException extends RuntimeException {

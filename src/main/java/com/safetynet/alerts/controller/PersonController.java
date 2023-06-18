@@ -4,6 +4,8 @@ import com.safetynet.alerts.object.request.PersonRequest;
 import com.safetynet.alerts.object.response.PersonResponse;
 import com.safetynet.alerts.service.PersonService;
 import jakarta.validation.Valid;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/person")
 public class PersonController {
 
+    private final Logger logger = LogManager.getLogger(PersonController.class);
     private final PersonService personService;
 
     @Autowired
@@ -20,23 +23,30 @@ public class PersonController {
         this.personService = personService;
     }
 
-    @GetMapping// TODO: à supprimer
+    @GetMapping
     public ResponseEntity<PersonResponse> getPerson(@RequestParam String firstName, String lastName) {
-        return new ResponseEntity<>(personService.getPersonResponseByName(firstName, lastName), HttpStatus.OK);
+        PersonResponse personResponse = personService.getPersonResponseByName(firstName, lastName);
+        logger.info("Successful Request GET /person?firstName=" + firstName + "&lastName=" + lastName);
+        return new ResponseEntity<>(personResponse, HttpStatus.OK);
     }
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<PersonResponse> createPerson(@Valid @RequestBody PersonRequest personRequest) {
-        return new ResponseEntity<>(personService.createPerson(personRequest), HttpStatus.CREATED);
+        PersonResponse personResponse = personService.getPersonResponseByName(personRequest.getFirstName(), personRequest.getLastName());
+        logger.info("Successful Request POST /person");
+        return new ResponseEntity<>(personResponse, HttpStatus.CREATED);
     }
 
-    @PutMapping()
+    @PutMapping
     public ResponseEntity<PersonResponse> updatePerson(@Valid @RequestBody PersonRequest personRequest) {
-        return new ResponseEntity<>(personService.updatePerson(personRequest), HttpStatus.OK);
+        PersonResponse personResponse = personService.getPersonResponseByName(personRequest.getFirstName(), personRequest.getLastName());
+        logger.info("Successful Request PUT /person");
+        return new ResponseEntity<>(personResponse, HttpStatus.OK);
     }
 
     @DeleteMapping
     public void deletePerson(@RequestParam String firstName, String lastName) {
         personService.deletePerson(firstName, lastName);
+        logger.info("Successful Request DELETE /person?firstName=" + firstName + "&lastName=" + lastName);
     }
 }

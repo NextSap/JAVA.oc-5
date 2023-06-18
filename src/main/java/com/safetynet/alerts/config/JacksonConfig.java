@@ -13,6 +13,8 @@ import com.safetynet.alerts.util.DateUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -24,6 +26,8 @@ import java.util.stream.Collectors;
 
 @Configuration
 public class JacksonConfig implements ApplicationRunner {
+
+    private final Logger logger = LogManager.getLogger(JacksonConfig.class);
 
     private final ObjectMapper objectMapper;
 
@@ -43,6 +47,7 @@ public class JacksonConfig implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
+        logger.debug("Loading data from data.json");
         Models models = objectMapper.readValue(data.getInputStream(), Models.class);
 
         Entities entities = mapPersonAndFireStationEntities(models);
@@ -50,6 +55,8 @@ public class JacksonConfig implements ApplicationRunner {
         personRepository.saveAll(entities.getPeople());
         fireStationRepository.saveAll(entities.getFireStations());
         medicalRecordRepository.saveAll(mapMedicalRecords(models.medicalrecords));
+
+        logger.debug("Data loaded and saved to database");
     }
 
     public Entities mapPersonAndFireStationEntities(Models models) {

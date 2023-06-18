@@ -1,6 +1,8 @@
 package com.safetynet.alerts.exception;
 
 import com.safetynet.alerts.object.model.ErrorModel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,14 +10,13 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class ValidationException {
+
+    private final Logger logger = LogManager.getLogger(ValidationException.class);
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, List<ErrorModel>>> handleValidationErrors(MethodArgumentNotValidException ex) {
         List<ErrorModel> errors = ex.getAllErrors()
@@ -23,6 +24,9 @@ public class ValidationException {
                     String[] splitViolation = Objects.requireNonNull(error.getDefaultMessage()).split(":");
                     return ErrorModel.builder().field(splitViolation[0]).cause(splitViolation[1]).build();
                 }).collect(Collectors.toList());
+
+        logger.error("ValidationException: " + Arrays.toString(errors.toArray()));
+
         return new ResponseEntity<>(getErrorsMap(errors), new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
