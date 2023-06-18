@@ -1,0 +1,42 @@
+version: "3.7"
+services:
+  safety-service:
+    build:
+        context: .
+        dockerfile: Dockerfile-spring
+    tty: true
+    container_name: safety-service
+    image: safety-service
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - safety-ms
+    environment:
+      MYSQL_HOST: safety-db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_PORT: 3306
+    depends_on:
+      - safety-db
+
+  safety-db:
+    image: "mysql:latest"
+    container_name: safety-db
+    command: --default-authentication-plugin=mysql_native_password
+    build:
+        context: .
+        dockerfile: Dockerfile-db
+    restart: always
+    ports:
+      - "3307:3306"
+    networks:
+      - safety-ms
+    environment:
+      MYSQL_DATABASE: safety
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./database.sql:/docker-entrypoint-initdb.d/database.sql
+
+networks:
+  safety-ms:
