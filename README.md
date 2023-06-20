@@ -22,7 +22,7 @@ de test.
 Démarrage de l'outil de gestion du projet :
 
 ```bash
-java -jar manager.jar
+java -jar Manager.jar
 ```
 Grâce à cet outil, vous pouvez : 
 - Créer et lancer les containers Docker de l'application
