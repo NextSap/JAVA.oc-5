@@ -17,13 +17,17 @@ de test.
 * Installer <a target="_blank" href="https://docs.docker.com/get-docker/">Docker</a>
   et <a target="_blank" href="https://docs.docker.com/compose/install/">Docker Compose</a>
 
-### Démarrage
+### <p id="starting">Démarrage</p>
 
-Démarrage de l'application et de la base de données :
+Démarrage de l'outil de gestion du projet :
 
 ```bash
-docker-compose up -d --build
+java -jar manager.jar
 ```
+Grâce à cet outil, vous pouvez : 
+- Créer et lancer les containers Docker de l'application
+- Eteindre et supprimer les containers Docker de l'application
+- Lancer la documentation Swagger de l'API
 
 ### Testing
 
@@ -37,8 +41,7 @@ mvn test
 
 ### Swagger
 
-Lorsque l'application est démarrée, vous pouvez accéder à la documentation de l'API à l'adresse
-suivante : http://localhost:8080/docs
+cf. <a href="#starting">Démarrage</a>
 
 ### Postman
 
