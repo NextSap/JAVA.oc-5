@@ -19,7 +19,7 @@ de test.
 
 ### <p id="starting">Démarrage</p>
 
-Démarrage de l'outil de gestion du projet :
+Démarrage de l'outil de gestion du projet (<a href="https://github.com/NextSap/ProjectManager/tree/java.oc-5">voir les sources</a>) :
 
 ```bash
 java -jar manager.jar
