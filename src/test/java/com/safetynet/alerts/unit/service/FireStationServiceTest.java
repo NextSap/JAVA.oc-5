@@ -150,7 +150,7 @@ public class FireStationServiceTest {
         when(medicalRecordService.getMedicalRecordEntityByName(any(), any())).thenReturn(medicalRecordEntity);
         when(personService.getPeopleFromStreet(any())).thenReturn(List.of(personEntity));
 
-        assertEquals(FireResponse.builder().people(List.of(personMapper.toPersonWithMedicalsResponse(personEntity, medicalRecordEntity))).station(1).build(), fireStationService.getPeopleAndFireStationFromAddress(address));
+        assertEquals(FireResponse.builder().people(List.of(personMapper.toPersonWithSimpleMedicalsResponse(personEntity, medicalRecordEntity))).station(1).build(), fireStationService.getPeopleAndFireStationFromAddress(address));
     }
 
     @Test

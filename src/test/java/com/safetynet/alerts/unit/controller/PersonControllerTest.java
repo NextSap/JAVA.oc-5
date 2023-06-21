@@ -80,6 +80,7 @@ public class PersonControllerTest {
         String requestJson = OBJECT_MAPPER.writeValueAsString(personRequest);
         String responseJson = OBJECT_MAPPER.writeValueAsString(personResponse);
 
+
         mockMvc.perform(post(PERSON_URL).contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
                 .andExpect(status().isCreated())

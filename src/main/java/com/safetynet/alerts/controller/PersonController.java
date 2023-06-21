@@ -32,14 +32,14 @@ public class PersonController {
 
     @PostMapping
     public ResponseEntity<PersonResponse> createPerson(@Valid @RequestBody PersonRequest personRequest) {
-        PersonResponse personResponse = personService.getPersonResponseByName(personRequest.getFirstName(), personRequest.getLastName());
+        PersonResponse personResponse = personService.createPerson(personRequest);
         logger.info("Successful Request POST /person");
         return new ResponseEntity<>(personResponse, HttpStatus.CREATED);
     }
 
     @PutMapping
     public ResponseEntity<PersonResponse> updatePerson(@Valid @RequestBody PersonRequest personRequest) {
-        PersonResponse personResponse = personService.getPersonResponseByName(personRequest.getFirstName(), personRequest.getLastName());
+        PersonResponse personResponse = personService.updatePerson(personRequest);
         logger.info("Successful Request PUT /person");
         return new ResponseEntity<>(personResponse, HttpStatus.OK);
     }

@@ -22,20 +22,13 @@ de test.
 Démarrage de l'outil de gestion du projet :
 
 ```bash
-java -jar Manager.jar
+java -jar manager.jar
 ```
 Grâce à cet outil, vous pouvez : 
-- Créer et lancer les containers Docker de l'application
-- Eteindre et supprimer les containers Docker de l'application
-- Lancer la documentation Swagger de l'API
-
-### Testing
-
-Lancement des tests unitaires :
-
-```bash
-mvn test
-```
+- Créer, lancer, éteindre et supprimer les containers Docker de l'application
+- Générer et lancer la documentation Swagger de l'API
+- Lancer les tests unitaires
+- Générer le rapport Jacoco
 
 ## Documentation
 
@@ -45,7 +38,7 @@ cf. <a href="#starting">Démarrage</a>
 
 ### Postman
 
-Vous pouvez également importer la collection Postman qui correspond à cette API (cf. <a target="_blank" href="https://learning.postman.com/docs/getting-started/importing-and-exporting-data/#importing-data-into-postman">Postman - Importing data into Postman</a>)
+Vous pouvez également importer la collection Postman qui correspond à cette API afin d'effectuer les requêtes pour facilement (cf. <a target="_blank" href="https://learning.postman.com/docs/getting-started/importing-and-exporting-data/#importing-data-into-postman">Postman - Importing data into Postman</a>)
 ```
 cd .postman/
 ```

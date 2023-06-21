@@ -15,7 +15,7 @@ public class PersonResponse {
     private String phone;
     private String email;
     private String birthdate;
-    private int age;
+    private Integer age;
     private AddressResponse address;
     private MedicalRecordResponse medicalRecord;
 }

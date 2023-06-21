@@ -73,9 +73,7 @@ public class FireStationControllerTest {
 
     @Test
     public void testDeleteFireStation() throws Exception {
-        String json = OBJECT_MAPPER.writeValueAsString(station);
-
-        mockMvc.perform(delete(FIRE_STATION_URL).contentType(MediaType.APPLICATION_JSON).content(json))
+        mockMvc.perform(delete(FIRE_STATION_URL).contentType(MediaType.APPLICATION_JSON).param("station", String.valueOf(station)))
                 .andExpect(status().isOk());
     }
 }

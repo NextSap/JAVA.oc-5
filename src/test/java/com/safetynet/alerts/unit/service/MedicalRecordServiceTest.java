@@ -90,12 +90,12 @@ public class MedicalRecordServiceTest {
 
         MedicalRecordRequest medicalRecordRequest = MedicalRecordRequest.builder()
                 .firstName(firstName)
-                .lastName(lastName)
+                .lastName("Baz")
                 .medications(new ArrayList<>())
                 .allergies(new ArrayList<>())
                 .build();
 
-        assertEquals(medicalRecordMapper.toMedicalRecordResponse(medicalRecordEntity, firstName, lastName), medicalRecordService.createMedicalRecord(medicalRecordRequest));
+        assertEquals(medicalRecordMapper.toMedicalRecordResponse(medicalRecordEntity, firstName, "Baz"), medicalRecordService.createMedicalRecord(medicalRecordRequest));
     }
 
     @Test
@@ -104,12 +104,12 @@ public class MedicalRecordServiceTest {
 
         MedicalRecordRequest medicalRecordRequest = MedicalRecordRequest.builder()
                 .firstName(firstName)
-                .lastName("Baz")
+                .lastName(lastName)
                 .medications(new ArrayList<>())
                 .allergies(new ArrayList<>())
                 .build();
 
-        assertEquals(medicalRecordMapper.toMedicalRecordResponse(medicalRecordEntity, firstName, "Baz"), medicalRecordService.updateMedicalRecord(medicalRecordRequest));
+        assertEquals(medicalRecordMapper.toMedicalRecordResponse(medicalRecordEntity, firstName, lastName), medicalRecordService.updateMedicalRecord(medicalRecordRequest));
     }
 
     @Test
