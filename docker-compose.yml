@@ -4,14 +4,11 @@ services:
     build:
         context: .
         dockerfile: Dockerfile-spring
-    tty: true
     container_name: safety-service
     image: safety-service
-    restart: always
+    restart: on-failure
     ports:
       - "8080:8080"
-    networks:
-      - safety-ms
     environment:
       MYSQL_HOST: safety-db
       MYSQL_USER: root
@@ -27,16 +24,11 @@ services:
     build:
         context: .
         dockerfile: Dockerfile-db
-    restart: always
+    restart: on-failure
     ports:
       - "3307:3306"
-    networks:
-      - safety-ms
     environment:
       MYSQL_DATABASE: safety
       MYSQL_ROOT_PASSWORD: root
     volumes:
       - ./database.sql:/docker-entrypoint-initdb.d/database.sql
-
-networks:
-  safety-ms:
