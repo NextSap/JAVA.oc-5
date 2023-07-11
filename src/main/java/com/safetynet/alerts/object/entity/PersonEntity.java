@@ -18,6 +18,6 @@ public class PersonEntity {
     private String phone;
     private String email;
     private Long birthdate;
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     private AddressEntity address;
 }

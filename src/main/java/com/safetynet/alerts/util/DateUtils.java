@@ -38,14 +38,14 @@ public class DateUtils {
     }
 
     /**
-     * Parse a date with the format dd/MM/yyyy
+     * Parse a date with the format MM/dd/yyyy
      *
      * @param date the date to parse
      * @return the date parsed
      */
     public Date getDate(String date) {
         try {
-            return new SimpleDateFormat("dd/MM/yyyy").parse(date);
+            return new SimpleDateFormat("MM/dd/yyyy").parse(date);
         } catch (Exception e) {
             logger.error("RuntimeException : " + e.getMessage());
             throw new RuntimeException(e.getMessage(), e.getCause());
@@ -74,7 +74,7 @@ public class DateUtils {
     }
 
     /**
-     * Get the date with a specified format
+     * Get the date with a dd/MM/yyyy format
      *
      * @param date the date to format
      * @return the date formatted

@@ -108,7 +108,7 @@ public class JacksonConfig implements ApplicationRunner {
 
             Optional<PersonEntity> personEntity = personRepository.findAll().stream().filter(person -> person.getFirstName().equals(medicalrecord.getFirstName()) && person.getLastName().equals(medicalrecord.getLastName())).findFirst();
 
-            if(personEntity.isEmpty()) throw new PersonException.PersonNotFoundException("Person not found");
+            if (personEntity.isEmpty()) throw new PersonException.PersonNotFoundException("Person not found");
 
             medicalRecordEntity.setPersonId(personEntity.get().getId());
 
