@@ -1,0 +1,26 @@
+package com.safetynet.alerts.object.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.Arrays;
+import java.util.List;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Builder
+@Table(name = "firestation")
+public class FireStationEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
+    private Integer station;
+    @ElementCollection
+    private List<String> addresses;
+
+    public void addAddress(String... address) {
+        this.addresses.addAll(Arrays.asList(address));
+    }
+}
